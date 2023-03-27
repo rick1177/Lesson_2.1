@@ -31,7 +31,23 @@ namespace Lesson_2._1
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tab_ATMs = new System.Windows.Forms.TabPage();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.dataGridView_ATMs = new System.Windows.Forms.DataGridView();
+            this.ATM_Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Banknotes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.quantity_banknotes = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Blocked_cards = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.DataGridView_banknotes = new System.Windows.Forms.DataGridView();
+            this.type = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.quantity = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button_add_ATM = new System.Windows.Forms.Button();
+            this.button_chamge_banknotes = new System.Windows.Forms.Button();
+            this.button_extract_cards = new System.Windows.Forms.Button();
+            this.button_delete_ATM = new System.Windows.Forms.Button();
             this.miniToolStrip = new System.Windows.Forms.MenuStrip();
             this.менюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tab_card_accounts = new System.Windows.Forms.TabPage();
@@ -59,6 +75,11 @@ namespace Lesson_2._1
             this.comboBox_choose_account_type = new System.Windows.Forms.ComboBox();
             this.tab_ATM_transactions = new System.Windows.Forms.TabPage();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tab_ATMs.SuspendLayout();
+            this.panel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_ATMs)).BeginInit();
+            this.panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridView_banknotes)).BeginInit();
             this.miniToolStrip.SuspendLayout();
             this.tab_card_accounts.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -70,12 +91,171 @@ namespace Lesson_2._1
             // 
             // tab_ATMs
             // 
+            this.tab_ATMs.Controls.Add(this.panel5);
+            this.tab_ATMs.Controls.Add(this.panel4);
             this.tab_ATMs.Location = new System.Drawing.Point(4, 25);
             this.tab_ATMs.Name = "tab_ATMs";
             this.tab_ATMs.Size = new System.Drawing.Size(775, 544);
             this.tab_ATMs.TabIndex = 2;
             this.tab_ATMs.Text = "Управление Банкоматами";
             this.tab_ATMs.UseVisualStyleBackColor = true;
+            // 
+            // panel5
+            // 
+            this.panel5.BackColor = System.Drawing.Color.Red;
+            this.panel5.Controls.Add(this.dataGridView_ATMs);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel5.Location = new System.Drawing.Point(199, 0);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(576, 544);
+            this.panel5.TabIndex = 5;
+            // 
+            // dataGridView_ATMs
+            // 
+            this.dataGridView_ATMs.AllowUserToAddRows = false;
+            this.dataGridView_ATMs.AllowUserToResizeColumns = false;
+            this.dataGridView_ATMs.AllowUserToResizeRows = false;
+            this.dataGridView_ATMs.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView_ATMs.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.dataGridView_ATMs.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_ATMs.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { this.ATM_Id, this.Banknotes, this.quantity_banknotes, this.Blocked_cards });
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView_ATMs.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridView_ATMs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView_ATMs.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView_ATMs.MultiSelect = false;
+            this.dataGridView_ATMs.Name = "dataGridView_ATMs";
+            this.dataGridView_ATMs.RowHeadersVisible = false;
+            this.dataGridView_ATMs.RowTemplate.Height = 24;
+            this.dataGridView_ATMs.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView_ATMs.Size = new System.Drawing.Size(576, 544);
+            this.dataGridView_ATMs.TabIndex = 0;
+            this.dataGridView_ATMs.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dataGridView_ATMs_UserDeletingRow);
+            // 
+            // ATM_Id
+            // 
+            this.ATM_Id.HeaderText = "ID";
+            this.ATM_Id.Name = "ATM_Id";
+            this.ATM_Id.ReadOnly = true;
+            // 
+            // Banknotes
+            // 
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopRight;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.Banknotes.DefaultCellStyle = dataGridViewCellStyle1;
+            this.Banknotes.HeaderText = "Банкноты";
+            this.Banknotes.Name = "Banknotes";
+            this.Banknotes.ReadOnly = true;
+            // 
+            // quantity_banknotes
+            // 
+            this.quantity_banknotes.HeaderText = "Кол-во";
+            this.quantity_banknotes.Name = "quantity_banknotes";
+            this.quantity_banknotes.ReadOnly = true;
+            // 
+            // Blocked_cards
+            // 
+            this.Blocked_cards.HeaderText = "Заблокированные карты";
+            this.Blocked_cards.Name = "Blocked_cards";
+            this.Blocked_cards.ReadOnly = true;
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.DataGridView_banknotes);
+            this.panel4.Controls.Add(this.button_add_ATM);
+            this.panel4.Controls.Add(this.button_chamge_banknotes);
+            this.panel4.Controls.Add(this.button_extract_cards);
+            this.panel4.Controls.Add(this.button_delete_ATM);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel4.Location = new System.Drawing.Point(0, 0);
+            this.panel4.MinimumSize = new System.Drawing.Size(0, 50);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(199, 544);
+            this.panel4.TabIndex = 3;
+            // 
+            // DataGridView_banknotes
+            // 
+            this.DataGridView_banknotes.AllowUserToAddRows = false;
+            this.DataGridView_banknotes.AllowUserToResizeColumns = false;
+            this.DataGridView_banknotes.AllowUserToResizeRows = false;
+            this.DataGridView_banknotes.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.DataGridView_banknotes.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.DataGridView_banknotes.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.DataGridView_banknotes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataGridView_banknotes.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { this.type, this.quantity });
+            this.DataGridView_banknotes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.DataGridView_banknotes.GridColor = System.Drawing.SystemColors.ControlLight;
+            this.DataGridView_banknotes.Location = new System.Drawing.Point(0, 0);
+            this.DataGridView_banknotes.Name = "DataGridView_banknotes";
+            this.DataGridView_banknotes.RowHeadersVisible = false;
+            this.DataGridView_banknotes.RowTemplate.Height = 24;
+            this.DataGridView_banknotes.Size = new System.Drawing.Size(199, 380);
+            this.DataGridView_banknotes.TabIndex = 10;
+            this.DataGridView_banknotes.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DataGridView_banknotes_CellFormatting);
+            this.DataGridView_banknotes.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.DataGridView_banknotes_EditingControlShowing);
+            this.DataGridView_banknotes.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DataGridView_banknotes_KeyDown);
+            this.DataGridView_banknotes.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DataGridView_banknotes_KeyPress);
+            // 
+            // type
+            // 
+            this.type.HeaderText = "Тип";
+            this.type.Name = "type";
+            this.type.ReadOnly = true;
+            // 
+            // quantity
+            // 
+            this.quantity.HeaderText = "Кол-во";
+            this.quantity.MaxInputLength = 4;
+            this.quantity.Name = "quantity";
+            // 
+            // button_add_ATM
+            // 
+            this.button_add_ATM.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.button_add_ATM.Location = new System.Drawing.Point(0, 380);
+            this.button_add_ATM.Name = "button_add_ATM";
+            this.button_add_ATM.Size = new System.Drawing.Size(199, 38);
+            this.button_add_ATM.TabIndex = 9;
+            this.button_add_ATM.Text = "Добавить банкомат";
+            this.button_add_ATM.UseVisualStyleBackColor = true;
+            this.button_add_ATM.Click += new System.EventHandler(this.button_add_ATM_Click);
+            // 
+            // button_chamge_banknotes
+            // 
+            this.button_chamge_banknotes.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.button_chamge_banknotes.Location = new System.Drawing.Point(0, 418);
+            this.button_chamge_banknotes.Name = "button_chamge_banknotes";
+            this.button_chamge_banknotes.Size = new System.Drawing.Size(199, 50);
+            this.button_chamge_banknotes.TabIndex = 8;
+            this.button_chamge_banknotes.Text = "Изменить наполненность банкомата";
+            this.button_chamge_banknotes.UseVisualStyleBackColor = true;
+            this.button_chamge_banknotes.Click += new System.EventHandler(this.button_chamge_banknotes_Click);
+            // 
+            // button_extract_cards
+            // 
+            this.button_extract_cards.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.button_extract_cards.Location = new System.Drawing.Point(0, 468);
+            this.button_extract_cards.Name = "button_extract_cards";
+            this.button_extract_cards.Size = new System.Drawing.Size(199, 38);
+            this.button_extract_cards.TabIndex = 7;
+            this.button_extract_cards.Text = "Извлеч карты";
+            this.button_extract_cards.UseVisualStyleBackColor = true;
+            // 
+            // button_delete_ATM
+            // 
+            this.button_delete_ATM.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.button_delete_ATM.Location = new System.Drawing.Point(0, 506);
+            this.button_delete_ATM.Name = "button_delete_ATM";
+            this.button_delete_ATM.Size = new System.Drawing.Size(199, 38);
+            this.button_delete_ATM.TabIndex = 6;
+            this.button_delete_ATM.Text = "Удалить банкомат";
+            this.button_delete_ATM.UseVisualStyleBackColor = true;
+            this.button_delete_ATM.Click += new System.EventHandler(this.button_delete_ATM_Click);
             // 
             // miniToolStrip
             // 
@@ -139,7 +319,6 @@ namespace Lesson_2._1
             this.dataGridView_accounts.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView_accounts.Size = new System.Drawing.Size(769, 399);
             this.dataGridView_accounts.TabIndex = 3;
-            this.dataGridView_accounts.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dataGridView_accounts_UserDeletingRow);
             // 
             // Id
             // 
@@ -336,8 +515,13 @@ namespace Lesson_2._1
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.miniToolStrip);
             this.Location = new System.Drawing.Point(15, 15);
-            this.MinimumSize = new System.Drawing.Size(800, 500);
+            this.MinimumSize = new System.Drawing.Size(800, 651);
             this.Name = "MainForm";
+            this.tab_ATMs.ResumeLayout(false);
+            this.panel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_ATMs)).EndInit();
+            this.panel4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridView_banknotes)).EndInit();
             this.miniToolStrip.ResumeLayout(false);
             this.miniToolStrip.PerformLayout();
             this.tab_card_accounts.ResumeLayout(false);
@@ -349,6 +533,28 @@ namespace Lesson_2._1
             this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
         }
+
+        private System.Windows.Forms.DataGridViewTextBoxColumn quantity_banknotes;
+
+        private System.Windows.Forms.DataGridViewTextBoxColumn ATM_Id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Banknotes;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Blocked_cards;
+
+        private System.Windows.Forms.DataGridView dataGridView_ATMs;
+
+        private System.Windows.Forms.DataGridViewTextBoxColumn quantity;
+
+        private System.Windows.Forms.DataGridViewTextBoxColumn type;
+
+        private System.Windows.Forms.DataGridView DataGridView_banknotes;
+
+        private System.Windows.Forms.Panel panel5;
+
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Button button_add_ATM;
+        private System.Windows.Forms.Button button_chamge_banknotes;
+        private System.Windows.Forms.Button button_extract_cards;
+        private System.Windows.Forms.Button button_delete_ATM;
 
         private System.Windows.Forms.TabPage tab_ATMs;
 

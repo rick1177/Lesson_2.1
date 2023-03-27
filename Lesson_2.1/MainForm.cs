@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,13 +12,26 @@ namespace Lesson_2._1
     public partial class MainForm : Form
     {
         private UserAccauntList _userAccauntList;
+        private ATMList _ATMs;
         private bool allowTabSwitching = true;
+
+        private Array values = Enum.GetValues(typeof(ATM.denominations));
 
         public MainForm()
         {
             InitializeComponent();
             _userAccauntList = UserAccauntList.GetInstance();
-            /*dataGridView_accounts.UserDeletingRow += new DataGridViewRowCancelEventHandler(dataGridView_accounts_UserDeletingRow);*/
+            _ATMs = ATMList.GetInstance();
+            foreach (var value in values)
+            {
+                // Преобразование значения в тип, который может быть добавлен в DataGridView
+                var convertedValue = Convert.ChangeType(value, typeof(int));
+
+                // Добавление значения в DataGridView
+                DataGridView_banknotes.Rows.Add(convertedValue);
+            }
+
+            DataGridView_banknotes.CurrentCell = DataGridView_banknotes[1, 0];
         }
 
 
@@ -149,9 +164,6 @@ namespace Lesson_2._1
             useraccount.StateOfAccount = useraccount.StateOfAccount == true ? false : true;
 
             dataGridView_accounts.SelectedRows[0].Cells[5].Value = useraccount.StateOfAccount;
-
-
-            var a = 7;
         }
 
         private void button_delete_account_Click(object sender, EventArgs e)
@@ -197,12 +209,12 @@ namespace Lesson_2._1
         private void button_change_accaunt_Click(object sender, EventArgs e)
         {
             if (dataGridView_accounts.CurrentRow == null) return;
-            
+
             var rowData = new string[dataGridView_accounts.Columns.Count];
             for (var i = 0; i < dataGridView_accounts.Columns.Count; i++)
                 rowData[i] = dataGridView_accounts.SelectedRows[0].Cells[i].Value.ToString();
             var useraccount = _userAccauntList.GetUserAccauntById(rowData[0]);
-            
+
             if (button_change_accaunt.Text == "Изменить счёт")
             {
                 button_change_accaunt.Text = "O.K.";
@@ -211,13 +223,12 @@ namespace Lesson_2._1
                 textBox_AvailableCreditLimit.Text = rowData[4];
 
                 textBox_PAS.Text = "";
-                
+
                 dataGridView_accounts.Enabled = false;
                 button_add_accaunt.Enabled = false;
                 button_change_status.Enabled = false;
                 button_delete_account.Enabled = false;
                 allowTabSwitching = !allowTabSwitching;
-
             }
             else
             {
@@ -244,7 +255,8 @@ namespace Lesson_2._1
                         useraccount.AccountBalace = balance;
                     }
                 }
-                if (textBox_AvailableCreditLimit.Text != "" &&  useraccount.AccountType==true)
+
+                if (textBox_AvailableCreditLimit.Text != "" && useraccount.AccountType == true)
                 {
                     rowData[4] = textBox_AvailableCreditLimit.Text;
                     if (float.TryParse(textBox_AvailableCreditLimit.Text, out creditlimit))
@@ -260,8 +272,8 @@ namespace Lesson_2._1
                     useraccount.PasswordHash = hash;
                     rowData[1] = hash;
                 }
-                
-                
+
+
                 int b = dataGridView_accounts.CurrentRow.Index;
 
                 dataGridView_accounts.Rows[b].SetValues(rowData);
@@ -271,9 +283,7 @@ namespace Lesson_2._1
                 button_change_status.Enabled = true;
                 button_delete_account.Enabled = true;
                 allowTabSwitching = !allowTabSwitching;
-
             }
-                
         }
 
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
@@ -283,5 +293,235 @@ namespace Lesson_2._1
                 e.Cancel = true;
             }
         }
+
+        private void DataGridView_banknotes_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                foreach (DataGridViewCell cell in DataGridView_banknotes.SelectedCells)
+                {
+                    if (DataGridView_banknotes.CurrentCell.ColumnIndex == 1)
+                    {
+                        cell.Value = null;
+                    }
+                }
+
+                e.Handled = true;
+            }
+        }
+
+        private void DataGridView_banknotes_EditingControlShowing(object sender,
+            DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (DataGridView_banknotes.CurrentCell.ColumnIndex ==
+                1) // проверяем, что текущая ячейка находится во втором столбце
+            {
+                e.Control.KeyPress += new KeyPressEventHandler(DataGridView_banknotes_KeyPress);
+            }
+        }
+
+
+        private void DataGridView_banknotes_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            {
+                e.Handled = true; // блокируем ввод, если нажатая клавиша не является цифрой или управляющим символом
+            }
+        }
+
+        private void DataGridView_banknotes_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == 0) // проверяем индекс столбца
+            {
+                e.CellStyle.BackColor = Color.Silver; // задаем зеленый цвет для ячейки
+            }
+        }
+
+        private void button_add_ATM_Click(object sender, EventArgs e)
+        {
+            int columnIndex = 1;
+            int rowCount = DataGridView_banknotes.Rows.Count;
+            int[] columnData = new int[rowCount];
+            for (int i = 0; i < rowCount; i++)
+            {
+                DataGridViewCell cell = DataGridView_banknotes[columnIndex, i];
+                if (cell.Value != null)
+                {
+                    columnData[i] = int.Parse(cell.Value.ToString());
+                }
+            }
+
+            int count = 0;
+            foreach (int element in columnData)
+            {
+                if (element != 0)
+                {
+                    count++;
+                }
+            }
+
+            var prop_banknotes = new Dictionary<ATM.denominations, int>();
+            var values = Enum.GetValues(typeof(ATM.denominations)).Cast<ATM.denominations>().ToArray();
+
+            if (count > 0)
+            {
+                for (int i = 0; i < values.Length; i++)
+                {
+                    if (columnData[i] > 0)
+                    {
+                        prop_banknotes.Add(values[i], columnData[i]);
+                    }
+                }
+            }
+
+            ATM _ATM;
+            if (prop_banknotes.Count > 0)
+            {
+                _ATM = new ATM(prop_banknotes);
+            }
+            else
+            {
+                _ATM = new ATM();
+            }
+            
+            _ATMs.AddATM(_ATM);
+ 
+            dataGridView_ATMs.Rows.Add(_ATM.ATM_id,_ATM.GetBanknotesDenominationsString(), _ATM.GetBanknotesVaulesString() , _ATM.GetBlockedCardsString());
+            for (int i = 0; i < _ATM.Banknotes.Count; i++)
+            {
+                DataGridView_banknotes.Rows[i].Cells[1].Value = null;
+            }
+
+            
+            /*dataGridView_ATMs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;*/
+            
+        }
+
+        private void button_chamge_banknotes_Click(object sender, EventArgs e)
+        {
+            if (dataGridView_ATMs.CurrentRow == null) return;
+            var rowData = new string[dataGridView_ATMs.Columns.Count];
+            for (var i = 0; i < dataGridView_ATMs.Columns.Count; i++)
+                rowData[i] = dataGridView_ATMs.SelectedRows[0].Cells[i].Value.ToString();
+            var _ATM = _ATMs.GetATMByATMId(rowData[0]);
+            
+            if (button_chamge_banknotes.Text == "Изменить наполненность банкомата")
+            {
+                int[] values = _ATM.Banknotes.Values.ToArray();   
+                for (int i = 0; i < _ATM.Banknotes.Count; i++)
+                {
+                    DataGridView_banknotes.Rows[i].Cells[1].Value = values[i].ToString();
+                }
+
+                button_chamge_banknotes.Text = "O.K.";
+                button_add_ATM.Enabled = false;
+                button_delete_ATM.Enabled = false;
+                button_extract_cards.Enabled = false;
+                allowTabSwitching = !allowTabSwitching;
+
+            }
+
+            else
+            {
+                
+                int rowCount = DataGridView_banknotes.Rows.Count;
+                int[] columnData = new int[rowCount];
+                for (int i = 0; i < rowCount; i++)
+                {
+                    DataGridViewCell cell = DataGridView_banknotes[1, i];
+                    if (cell.Value != null)
+                    {
+                        columnData[i] = int.Parse(cell.Value.ToString());
+                    }
+                }
+
+                int count = 0;
+                foreach (int element in columnData)
+                {
+                    count++;
+                }
+
+                var prop_banknotes = new Dictionary<ATM.denominations, int>();
+                var values = Enum.GetValues(typeof(ATM.denominations)).Cast<ATM.denominations>().ToArray();
+
+                if (count > 0)
+                {
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        prop_banknotes.Add(values[i], columnData[i]);
+                    }
+                }
+
+                _ATM.Banknotes = prop_banknotes;
+                
+                int b = dataGridView_ATMs.CurrentRow.Index;
+
+                dataGridView_ATMs.Rows[b].SetValues(_ATM.ATM_id,_ATM.GetBanknotesDenominationsString(), _ATM.GetBanknotesVaulesString() , _ATM.GetBlockedCardsString());
+                
+                for (int i = 0; i < _ATM.Banknotes.Count; i++)
+                {
+                    DataGridView_banknotes.Rows[i].Cells[1].Value = null;
+                }
+                
+                button_chamge_banknotes.Text = "Изменить наполненность банкомата";
+                button_add_ATM.Enabled = true;
+                button_delete_ATM.Enabled = true;
+                button_extract_cards.Enabled = true;
+                allowTabSwitching = !allowTabSwitching;
+            }
+
+            var a = 7;
+
+        }
+
+        private void button_delete_ATM_Click(object sender, EventArgs e)
+        {
+            if (dataGridView_ATMs.CurrentRow == null) return;
+
+            var result = MessageBox.Show("Вы действительно хотите удалить эту строку?", "Подтверждение удаления",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                var rowData = new string[dataGridView_ATMs.Columns.Count];
+                for (var i = 0; i < dataGridView_ATMs.Columns.Count; i++)
+                    rowData[i] = dataGridView_ATMs.SelectedRows[0].Cells[i].Value.ToString();
+                var _ATM = _ATMs.GetATMByATMId(rowData[0]);
+                
+                _ATMs.RemoveATM(rowData[0]);
+                
+                // TODO: требуется прописать проверку наличия заблокированных карт и при удалении разблокировать их
+
+                if (dataGridView_ATMs.Rows.Count > 0)
+                    dataGridView_ATMs.Rows.RemoveAt(dataGridView_ATMs.SelectedRows[0].Index);
+            }
+
+        }
+
+        private void dataGridView_ATMs_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            if (dataGridView_ATMs.CurrentRow == null) return;
+
+            var result = MessageBox.Show("Вы действительно хотите удалить эту строку?", "Подтверждение удаления",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            
+            if (result == DialogResult.No)
+            {
+                e.Cancel = true;
+            }
+            else
+            {
+                var rowData = new string[dataGridView_ATMs.Columns.Count];
+                for (var i = 0; i < dataGridView_ATMs.Columns.Count; i++)
+                    rowData[i] = dataGridView_ATMs.SelectedRows[0].Cells[i].Value.ToString();
+                var _ATM = _ATMs.GetATMByATMId(rowData[0]);
+                
+                _ATMs.RemoveATM(rowData[0]);
+                
+                // TODO: требуется прописать проверку наличия заблокированных карт и при удалении разблокировать их
+
+            }
+        }
+        
     }
 }

@@ -47,7 +47,7 @@ namespace Lesson_2._1
             return GetInstance()._userAccaunts;
         }
 
-        public List<string> GetAllUserAccauntIds()
+        public static List<string> GetAllUserAccauntIds()
         {
             var ids = new List<string>();
             foreach (var userAccaunt in GetInstance()._userAccaunts) ids.Add(userAccaunt.Id);

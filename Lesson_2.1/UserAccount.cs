@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Lesson_2._1
@@ -26,7 +26,16 @@ namespace Lesson_2._1
 
         public UserAccount(string pass, bool accountType)
         {
-            Id = GenerateRandomString(20);
+            string temp_str = "";
+            temp_str = GenerateRandomString(20);
+            List<string> existingUserAccounts = UserAccauntList.GetAllUserAccauntIds();
+            while (existingUserAccounts.Contains(temp_str))
+            {
+                temp_str = GenerateRandomString(20);
+            }
+
+            Id = temp_str;
+
             var hash = "";
             var success = GenerateMd5Hash(pass, ref hash);
             if (!success) throw new ArgumentException("Пин долже состоять из 4-х цифр");
@@ -39,7 +48,15 @@ namespace Lesson_2._1
 
         public UserAccount(string pass, bool accountType, float accountBalace)
         {
-            Id = GenerateRandomString(20);
+            string temp_str = "";
+            temp_str = GenerateRandomString(20);
+            List<string> existingUserAccounts = UserAccauntList.GetAllUserAccauntIds();
+            while (existingUserAccounts.Contains(temp_str))
+            {
+                temp_str = GenerateRandomString(20);
+            }
+
+            Id = temp_str;
             var hash = "";
             var success = GenerateMd5Hash(pass, ref hash);
             if (!success) throw new ArgumentException("Пин долже состоять из 4-х цифр");
@@ -53,7 +70,15 @@ namespace Lesson_2._1
         public UserAccount(string pass,
             bool accountType, float accountBalace, float availableCreditLimit)
         {
-            Id = GenerateRandomString(20);
+            string temp_str = "";
+            temp_str = GenerateRandomString(20);
+            List<string> existingUserAccounts = UserAccauntList.GetAllUserAccauntIds();
+            while (existingUserAccounts.Contains(temp_str))
+            {
+                temp_str = GenerateRandomString(20);
+            }
+
+            Id = temp_str;
             var hash = "";
             var success = GenerateMd5Hash(pass, ref hash);
             if (!success) throw new ArgumentException("Пин долже состоять из 4-х цифр");
@@ -155,7 +180,7 @@ namespace Lesson_2._1
             return temp_str;
         }
 
-        private static string GenerateRandomString(int length)
+        public static string GenerateRandomString(int length)
         {
             var random = new Random();
             var sb = new StringBuilder();
