@@ -174,8 +174,8 @@ namespace Lesson_2._1
         public string GetReport()
         {
             var dateTimeString = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            var temp_str = dateTimeString + ": \n Баланс: " + AccountBalace.ToString() +
-                           "Кредитный лимит: " + AvailableCreditLimit.ToString() +
+            var temp_str = dateTimeString + ": \n Баланс: " + AccountBalace.ToString() + "\n"+
+                           "Кредитный лимит: " + AvailableCreditLimit.ToString() +"\n"+
                            "Доступная сумма: " + GetFundsAvailable().ToString();
             return temp_str;
         }

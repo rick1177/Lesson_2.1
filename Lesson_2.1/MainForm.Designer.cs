@@ -74,15 +74,18 @@ namespace Lesson_2._1
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox_choose_account_type = new System.Windows.Forms.ComboBox();
             this.tab_ATM_transactions = new System.Windows.Forms.TabPage();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.textBox_transaction_summ = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.button_finish_work = new System.Windows.Forms.Button();
+            this.button_check_account_information = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button_enter_card = new System.Windows.Forms.Button();
             this.comboBox_select_card = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.comboBox_select_ATM = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.panel6 = new System.Windows.Forms.Panel();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.button_check_account_information = new System.Windows.Forms.Button();
             this.tab_ATMs.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_ATMs)).BeginInit();
@@ -95,8 +98,8 @@ namespace Lesson_2._1
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_accounts)).BeginInit();
             this.panel1.SuspendLayout();
             this.tab_ATM_transactions.SuspendLayout();
-            this.tabControl1.SuspendLayout();
             this.panel6.SuspendLayout();
+            this.tabControl1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tab_ATMs
@@ -255,6 +258,7 @@ namespace Lesson_2._1
             this.button_extract_cards.TabIndex = 7;
             this.button_extract_cards.Text = "Извлеч карты";
             this.button_extract_cards.UseVisualStyleBackColor = true;
+            this.button_extract_cards.Click += new System.EventHandler(this.button_extract_cards_Click);
             // 
             // button_delete_ATM
             // 
@@ -509,6 +513,66 @@ namespace Lesson_2._1
             this.tab_ATM_transactions.Text = "Провести транзакцию";
             this.tab_ATM_transactions.UseVisualStyleBackColor = true;
             // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.textBox_transaction_summ);
+            this.panel6.Controls.Add(this.label7);
+            this.panel6.Controls.Add(this.button_finish_work);
+            this.panel6.Controls.Add(this.button_check_account_information);
+            this.panel6.Controls.Add(this.comboBox1);
+            this.panel6.Location = new System.Drawing.Point(10, 103);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(445, 433);
+            this.panel6.TabIndex = 5;
+            this.panel6.Visible = false;
+            // 
+            // textBox_transaction_summ
+            // 
+            this.textBox_transaction_summ.Location = new System.Drawing.Point(225, 81);
+            this.textBox_transaction_summ.Name = "textBox_transaction_summ";
+            this.textBox_transaction_summ.Size = new System.Drawing.Size(213, 22);
+            this.textBox_transaction_summ.TabIndex = 4;
+            this.textBox_transaction_summ.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_transaction_summ_KeyPress);
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(6, 55);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(173, 23);
+            this.label7.TabIndex = 3;
+            this.label7.Text = "Укажите операцию для выполнения";
+            // 
+            // button_finish_work
+            // 
+            this.button_finish_work.Location = new System.Drawing.Point(6, 397);
+            this.button_finish_work.Margin = new System.Windows.Forms.Padding(6);
+            this.button_finish_work.Name = "button_finish_work";
+            this.button_finish_work.Size = new System.Drawing.Size(433, 30);
+            this.button_finish_work.TabIndex = 2;
+            this.button_finish_work.Text = "Завершить работу и вернуть карту";
+            this.button_finish_work.UseVisualStyleBackColor = true;
+            this.button_finish_work.Click += new System.EventHandler(this.button_finish_work_Click);
+            // 
+            // button_check_account_information
+            // 
+            this.button_check_account_information.Location = new System.Drawing.Point(6, 6);
+            this.button_check_account_information.Margin = new System.Windows.Forms.Padding(6);
+            this.button_check_account_information.Name = "button_check_account_information";
+            this.button_check_account_information.Size = new System.Drawing.Size(433, 30);
+            this.button_check_account_information.TabIndex = 1;
+            this.button_check_account_information.Text = "Проверить информацию по карте";
+            this.button_check_account_information.UseVisualStyleBackColor = true;
+            this.button_check_account_information.Click += new System.EventHandler(this.button_check_account_information_Click);
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] { "Пополнение", "Снятие", "Перевод" });
+            this.comboBox1.Location = new System.Drawing.Point(6, 81);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(213, 24);
+            this.comboBox1.TabIndex = 0;
+            // 
             // button_enter_card
             // 
             this.button_enter_card.Location = new System.Drawing.Point(10, 67);
@@ -566,34 +630,6 @@ namespace Lesson_2._1
             this.tabControl1.TabIndex = 1;
             this.tabControl1.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl1_Selecting);
             // 
-            // panel6
-            // 
-            this.panel6.Controls.Add(this.button_check_account_information);
-            this.panel6.Controls.Add(this.comboBox1);
-            this.panel6.Location = new System.Drawing.Point(10, 103);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(445, 433);
-            this.panel6.TabIndex = 5;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(12, 61);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 0;
-            // 
-            // button_check_account_information
-            // 
-            this.button_check_account_information.Location = new System.Drawing.Point(6, 6);
-            this.button_check_account_information.Margin = new System.Windows.Forms.Padding(6);
-            this.button_check_account_information.Name = "button_check_account_information";
-            this.button_check_account_information.Size = new System.Drawing.Size(433, 30);
-            this.button_check_account_information.TabIndex = 1;
-            this.button_check_account_information.Text = "Проверить информацию по карте";
-            this.button_check_account_information.UseVisualStyleBackColor = true;
-            this.button_check_account_information.Click += new System.EventHandler(this.button_check_account_information_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -619,10 +655,17 @@ namespace Lesson_2._1
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tab_ATM_transactions.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
         }
+
+        private System.Windows.Forms.TextBox textBox_transaction_summ;
+
+        private System.Windows.Forms.Label label7;
+
+        private System.Windows.Forms.Button button_finish_work;
 
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.ComboBox comboBox1;

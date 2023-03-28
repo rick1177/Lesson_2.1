@@ -585,6 +585,12 @@ namespace Lesson_2._1
                         button_tag_list_Objects.Add(_ATM);
                         button_tag_list_Objects.Add(card);
                         this.button_enter_card.Tag = button_tag_list_Objects;
+                        panel6.Visible = true;
+                        label5.Enabled = false;
+                        label6.Enabled = false;
+                        comboBox_select_ATM.Enabled = false;
+                        comboBox_select_card.Enabled = false;
+                        allowTabSwitching = !allowTabSwitching;
                         break;
                     }
                     else
@@ -621,8 +627,56 @@ namespace Lesson_2._1
             ATM _ATM = previous_button_tag_list_Objects[0] as ATM;
             UserAccount card = previous_button_tag_list_Objects[1] as UserAccount;
             
-            int a = 7;
-    
+            MessageBox.Show(card.GetReport());
+
+        }
+
+        private void button_finish_work_Click(object sender, EventArgs e)
+        {
+            panel6.Visible = false;
+            label5.Enabled = true;
+            label6.Enabled = true;
+            comboBox_select_ATM.Enabled = true;
+            comboBox_select_card.Enabled = true;
+            allowTabSwitching = !allowTabSwitching;
+        }
+
+        private void button_extract_cards_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void textBox_transaction_summ_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            var ch = e.KeyChar;
+
+            // Разрешаем ввод цифр и точки
+            if (char.IsDigit(ch) || ch == '.')
+            {
+                var text = textBox_transaction_summ.Text;
+
+                // Проверяем, есть ли уже точка или запятая в строке
+                if (ch == '.' && (text.Contains('.') || text.Length == 0 || text.EndsWith(".")))
+                {
+                    e.Handled = true;
+                }
+                else if (text.Contains('.'))
+                {
+                    // Проверяем, сколько цифр после точки
+                    var parts = text.Split('.');
+                    if (parts.Length > 1 && parts[1].Length >= 2) e.Handled = true;
+                }
+            }
+            else if (ch == (char)Keys.Back)
+            {
+                // Разрешаем удаление символов
+                e.Handled = false;
+            }
+            else
+            {
+                // Блокируем все остальные символы
+                e.Handled = true;
+            }
         }
     }
 }
