@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Microsoft.VisualBasic;
 
 namespace Lesson_2._1
 {
@@ -383,18 +384,19 @@ namespace Lesson_2._1
             {
                 _ATM = new ATM();
             }
-            
+
             _ATMs.AddATM(_ATM);
- 
-            dataGridView_ATMs.Rows.Add(_ATM.ATM_id,_ATM.GetBanknotesDenominationsString(), _ATM.GetBanknotesVaulesString() , _ATM.GetBlockedCardsString());
+
+            dataGridView_ATMs.Rows.Add(_ATM.ATM_id, _ATM.GetBanknotesDenominationsString(),
+                _ATM.GetBanknotesVaulesString(), _ATM.GetBlockedCardsString());
             for (int i = 0; i < _ATM.Banknotes.Count; i++)
             {
                 DataGridView_banknotes.Rows[i].Cells[1].Value = null;
             }
 
-            
+
             /*dataGridView_ATMs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;*/
-            
+
         }
 
         private void button_chamge_banknotes_Click(object sender, EventArgs e)
@@ -404,10 +406,10 @@ namespace Lesson_2._1
             for (var i = 0; i < dataGridView_ATMs.Columns.Count; i++)
                 rowData[i] = dataGridView_ATMs.SelectedRows[0].Cells[i].Value.ToString();
             var _ATM = _ATMs.GetATMByATMId(rowData[0]);
-            
+
             if (button_chamge_banknotes.Text == "Изменить наполненность банкомата")
             {
-                int[] values = _ATM.Banknotes.Values.ToArray();   
+                int[] values = _ATM.Banknotes.Values.ToArray();
                 for (int i = 0; i < _ATM.Banknotes.Count; i++)
                 {
                     DataGridView_banknotes.Rows[i].Cells[1].Value = values[i].ToString();
@@ -423,7 +425,7 @@ namespace Lesson_2._1
 
             else
             {
-                
+
                 int rowCount = DataGridView_banknotes.Rows.Count;
                 int[] columnData = new int[rowCount];
                 for (int i = 0; i < rowCount; i++)
@@ -453,16 +455,17 @@ namespace Lesson_2._1
                 }
 
                 _ATM.Banknotes = prop_banknotes;
-                
+
                 int b = dataGridView_ATMs.CurrentRow.Index;
 
-                dataGridView_ATMs.Rows[b].SetValues(_ATM.ATM_id,_ATM.GetBanknotesDenominationsString(), _ATM.GetBanknotesVaulesString() , _ATM.GetBlockedCardsString());
-                
+                dataGridView_ATMs.Rows[b].SetValues(_ATM.ATM_id, _ATM.GetBanknotesDenominationsString(),
+                    _ATM.GetBanknotesVaulesString(), _ATM.GetBlockedCardsString());
+
                 for (int i = 0; i < _ATM.Banknotes.Count; i++)
                 {
                     DataGridView_banknotes.Rows[i].Cells[1].Value = null;
                 }
-                
+
                 button_chamge_banknotes.Text = "Изменить наполненность банкомата";
                 button_add_ATM.Enabled = true;
                 button_delete_ATM.Enabled = true;
@@ -487,9 +490,9 @@ namespace Lesson_2._1
                 for (var i = 0; i < dataGridView_ATMs.Columns.Count; i++)
                     rowData[i] = dataGridView_ATMs.SelectedRows[0].Cells[i].Value.ToString();
                 var _ATM = _ATMs.GetATMByATMId(rowData[0]);
-                
+
                 _ATMs.RemoveATM(rowData[0]);
-                
+
                 // TODO: требуется прописать проверку наличия заблокированных карт и при удалении разблокировать их
 
                 if (dataGridView_ATMs.Rows.Count > 0)
@@ -504,7 +507,7 @@ namespace Lesson_2._1
 
             var result = MessageBox.Show("Вы действительно хотите удалить эту строку?", "Подтверждение удаления",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            
+
             if (result == DialogResult.No)
             {
                 e.Cancel = true;
@@ -515,13 +518,111 @@ namespace Lesson_2._1
                 for (var i = 0; i < dataGridView_ATMs.Columns.Count; i++)
                     rowData[i] = dataGridView_ATMs.SelectedRows[0].Cells[i].Value.ToString();
                 var _ATM = _ATMs.GetATMByATMId(rowData[0]);
-                
+
                 _ATMs.RemoveATM(rowData[0]);
-                
+
                 // TODO: требуется прописать проверку наличия заблокированных карт и при удалении разблокировать их
 
             }
         }
-        
+
+        private void comboBox_select_ATM_DropDown(object sender, EventArgs e)
+        {
+            comboBox_select_ATM.Items.Clear();
+            List<string> _AtmList = _ATMs.GetAllATMsByIds_fm();
+            string[] _AtmList_array = _AtmList.ToArray();
+            if (_AtmList.Count <= 0) return;
+            else
+            {
+                comboBox_select_ATM.Items.AddRange(_AtmList_array);
+            }
+        }
+
+        private void comboBox_select_card_DropDown(object sender, EventArgs e)
+        {
+            comboBox_select_card.Items.Clear();
+            List<string> _cardList = _userAccauntList.GetAllUserAccauntIds_fm();
+            string[] _cardList_array = _cardList.ToArray();
+            if (_cardList.Count <= 0) return;
+            else
+            {
+                comboBox_select_card.Items.AddRange(_cardList_array);
+            }
+        }
+
+        private void button_enter_card_Click(object sender, EventArgs e)
+        {
+            List<object> button_tag_list_Objects = new List<object>();
+            string ATM_from_comboBox = comboBox_select_ATM.Text;
+            string card_from_comboBox = comboBox_select_card.Text;
+            if (ATM_from_comboBox=="" || ATM_from_comboBox==null) return;
+            if (card_from_comboBox=="" || card_from_comboBox==null) return;
+            ATM _ATM = _ATMs.GetATMByATMId(ATM_from_comboBox);
+            UserAccount card = _userAccauntList.GetUserAccauntById(card_from_comboBox);
+            if (_ATM==null || card ==null) return;
+
+            string result = "";
+            bool validInput = false;
+            int attempts = 0;
+            var hash = "";
+            
+            while (validInput == false && attempts < 3)
+            {
+                this.Tag = null;
+                Enter_pin childForm = new Enter_pin(); // создаем экземпляр дочерней формы
+                if (childForm.ShowDialog() == DialogResult.OK) // отображаем дочернюю форму как диалоговое окно
+                {
+                    result = childForm
+                        .Result; // получаем результат из дочерней формы и устанавливаем его в поле ввода на главной форме
+                }
+                var success = UserAccount.GenerateMd5Hash(result, ref hash);
+                
+                if (success)
+                {
+                    if (card.PasswordHash == hash)
+                    {
+                        validInput = true;
+                        button_tag_list_Objects.Add(_ATM);
+                        button_tag_list_Objects.Add(card);
+                        this.button_enter_card.Tag = button_tag_list_Objects;
+                        break;
+                    }
+                    else
+                    {
+                        attempts++;
+                        continue;
+                    }
+                }
+                else
+                {
+                    attempts++;
+                    continue;
+                }
+            }
+
+            if (attempts >= 3)
+            {
+                
+                // TODO: прописать блокировку карты
+                
+                int b = 7;
+            }
+            
+
+            int a = 7;
+
+        }
+
+        private void button_check_account_information_Click(object sender, EventArgs e)
+        {
+            List<object> previous_button_tag_list_Objects = button_enter_card.Tag as List<object>;
+            int b = 7;
+            if (previous_button_tag_list_Objects == null) return;
+            ATM _ATM = previous_button_tag_list_Objects[0] as ATM;
+            UserAccount card = previous_button_tag_list_Objects[1] as UserAccount;
+            
+            int a = 7;
+    
+        }
     }
 }

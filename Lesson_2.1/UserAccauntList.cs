@@ -53,5 +53,11 @@ namespace Lesson_2._1
             foreach (var userAccaunt in GetInstance()._userAccaunts) ids.Add(userAccaunt.Id);
             return ids;
         }
+        public List<string> GetAllUserAccauntIds_fm()
+        {
+            var ids = new List<string>();
+            foreach (var userAccaunt in GetInstance()._userAccaunts) ids.Add(userAccaunt.Id);
+            return ids;
+        }
     }
 }

@@ -74,7 +74,15 @@ namespace Lesson_2._1
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox_choose_account_type = new System.Windows.Forms.ComboBox();
             this.tab_ATM_transactions = new System.Windows.Forms.TabPage();
+            this.button_enter_card = new System.Windows.Forms.Button();
+            this.comboBox_select_card = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.comboBox_select_ATM = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.button_check_account_information = new System.Windows.Forms.Button();
             this.tab_ATMs.SuspendLayout();
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_ATMs)).BeginInit();
@@ -86,7 +94,9 @@ namespace Lesson_2._1
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_accounts)).BeginInit();
             this.panel1.SuspendLayout();
+            this.tab_ATM_transactions.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.panel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // tab_ATMs
@@ -485,6 +495,12 @@ namespace Lesson_2._1
             // 
             // tab_ATM_transactions
             // 
+            this.tab_ATM_transactions.Controls.Add(this.panel6);
+            this.tab_ATM_transactions.Controls.Add(this.button_enter_card);
+            this.tab_ATM_transactions.Controls.Add(this.comboBox_select_card);
+            this.tab_ATM_transactions.Controls.Add(this.label6);
+            this.tab_ATM_transactions.Controls.Add(this.comboBox_select_ATM);
+            this.tab_ATM_transactions.Controls.Add(this.label5);
             this.tab_ATM_transactions.Location = new System.Drawing.Point(4, 25);
             this.tab_ATM_transactions.Name = "tab_ATM_transactions";
             this.tab_ATM_transactions.Padding = new System.Windows.Forms.Padding(3);
@@ -492,6 +508,50 @@ namespace Lesson_2._1
             this.tab_ATM_transactions.TabIndex = 0;
             this.tab_ATM_transactions.Text = "Провести транзакцию";
             this.tab_ATM_transactions.UseVisualStyleBackColor = true;
+            // 
+            // button_enter_card
+            // 
+            this.button_enter_card.Location = new System.Drawing.Point(10, 67);
+            this.button_enter_card.Name = "button_enter_card";
+            this.button_enter_card.Size = new System.Drawing.Size(445, 30);
+            this.button_enter_card.TabIndex = 4;
+            this.button_enter_card.Text = "Вставить карту и ввести пин-код";
+            this.button_enter_card.UseVisualStyleBackColor = true;
+            this.button_enter_card.Click += new System.EventHandler(this.button_enter_card_Click);
+            // 
+            // comboBox_select_card
+            // 
+            this.comboBox_select_card.FormattingEnabled = true;
+            this.comboBox_select_card.Location = new System.Drawing.Point(189, 37);
+            this.comboBox_select_card.Name = "comboBox_select_card";
+            this.comboBox_select_card.Size = new System.Drawing.Size(266, 24);
+            this.comboBox_select_card.TabIndex = 3;
+            this.comboBox_select_card.DropDown += new System.EventHandler(this.comboBox_select_card_DropDown);
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(10, 40);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(173, 23);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Выберите карту";
+            // 
+            // comboBox_select_ATM
+            // 
+            this.comboBox_select_ATM.FormattingEnabled = true;
+            this.comboBox_select_ATM.Location = new System.Drawing.Point(189, 7);
+            this.comboBox_select_ATM.Name = "comboBox_select_ATM";
+            this.comboBox_select_ATM.Size = new System.Drawing.Size(266, 24);
+            this.comboBox_select_ATM.TabIndex = 1;
+            this.comboBox_select_ATM.DropDown += new System.EventHandler(this.comboBox_select_ATM_DropDown);
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(10, 10);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(173, 23);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Выберите банкомат";
             // 
             // tabControl1
             // 
@@ -505,6 +565,34 @@ namespace Lesson_2._1
             this.tabControl1.Size = new System.Drawing.Size(783, 573);
             this.tabControl1.TabIndex = 1;
             this.tabControl1.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl1_Selecting);
+            // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.button_check_account_information);
+            this.panel6.Controls.Add(this.comboBox1);
+            this.panel6.Location = new System.Drawing.Point(10, 103);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(445, 433);
+            this.panel6.TabIndex = 5;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(12, 61);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 24);
+            this.comboBox1.TabIndex = 0;
+            // 
+            // button_check_account_information
+            // 
+            this.button_check_account_information.Location = new System.Drawing.Point(6, 6);
+            this.button_check_account_information.Margin = new System.Windows.Forms.Padding(6);
+            this.button_check_account_information.Name = "button_check_account_information";
+            this.button_check_account_information.Size = new System.Drawing.Size(433, 30);
+            this.button_check_account_information.TabIndex = 1;
+            this.button_check_account_information.Text = "Проверить информацию по карте";
+            this.button_check_account_information.UseVisualStyleBackColor = true;
+            this.button_check_account_information.Click += new System.EventHandler(this.button_check_account_information_Click);
             // 
             // MainForm
             // 
@@ -530,9 +618,23 @@ namespace Lesson_2._1
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_accounts)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.tab_ATM_transactions.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
+            this.panel6.ResumeLayout(false);
             this.ResumeLayout(false);
         }
+
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Button button_check_account_information;
+
+        private System.Windows.Forms.Button button_enter_card;
+
+        private System.Windows.Forms.ComboBox comboBox_select_ATM;
+        private System.Windows.Forms.ComboBox comboBox_select_card;
+        private System.Windows.Forms.Label label6;
+
+        private System.Windows.Forms.Label label5;
 
         private System.Windows.Forms.DataGridViewTextBoxColumn quantity_banknotes;
 

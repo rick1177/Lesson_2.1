@@ -53,5 +53,12 @@ namespace Lesson_2._1
             foreach (var ATM_item in GetInstance()._ATMs) ids.Add(ATM_item.ATM_id);
             return ids;
         }
+        
+        public  List<string> GetAllATMsByIds_fm()
+        {
+            var ids = new List<string>();
+            foreach (var ATM_item in GetInstance()._ATMs) ids.Add(ATM_item.ATM_id);
+            return ids;
+        }
     }
 }
