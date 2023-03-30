@@ -601,6 +601,7 @@ namespace Lesson_2._1
             {
                 this.Tag = null;
                 Enter_pin childForm = new Enter_pin(); // создаем экземпляр дочерней формы
+                childForm.StartPosition = FormStartPosition.CenterParent; // позиционирование посреди родительской офрмы
                 if (childForm.ShowDialog() == DialogResult.OK) // отображаем дочернюю форму как диалоговое окно
                 {
                     result = childForm

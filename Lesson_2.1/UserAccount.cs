@@ -14,9 +14,9 @@ namespace Lesson_2._1
 
         // True - кредитная, False - дебетовая
         private bool _propAccountType;
-        private static float _propAccountBalace;
+        private float _propAccountBalace;
 
-        private static float _propAvailableCreditLimit;
+        private float _propAvailableCreditLimit;
 
         // если True, до доступен, False - не доступен
         private bool _propStateOfAccount;
