@@ -5,9 +5,15 @@ namespace Lesson_2._1
 {
     public partial class Enter_pin : Form
     {
-        public string Result { get; set; } 
+        public string Result { get; set; }
+
         public Enter_pin()
         {
+            // Установить свойство MinimizeBox в false, чтобы скрыть кнопку "Минимизировать"
+            this.MinimizeBox = false;
+
+            // Установить свойство MaximizeBox в false, чтобы скрыть кнопку "Развернуть"
+            this.MaximizeBox = false;
             InitializeComponent();
         }
 

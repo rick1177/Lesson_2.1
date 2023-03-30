@@ -33,7 +33,7 @@ namespace Lesson_2._1
             }
 
             ATM_id = temp_str;
-            blocked_account.AddRange(new[] { "foo", "bar", "baz" });
+            /*blocked_account.AddRange(new[] { "foo", "bar", "baz" });*/
             foreach (denominations d in Enum.GetValues(typeof(denominations)))
             {
                 prop_banknotes[d] = 0;
@@ -77,7 +77,7 @@ namespace Lesson_2._1
             }
 
             prop_banknotes = prop_banknotes_here;
-            blocked_account.AddRange(new[] { "foo", "bar", "baz" });
+            /*blocked_account.AddRange(new[] { "foo", "bar", "baz" });*/
             /*prop_banknotes = new Dictionary<denominations, int>(); */
             /*blocked_account = new List<string>();*/
         }
@@ -124,7 +124,7 @@ namespace Lesson_2._1
         {
             BlockedAccount.RemoveAll(accountId => accountIds.Contains(accountId));
         }
-        
+
         public string GetBanknotesString()
         {
             Dictionary<int, int> prop_banknotes_here = new Dictionary<int, int>();
@@ -133,23 +133,27 @@ namespace Lesson_2._1
             {
                 prop_banknotes_here[(int)d] = 0;
             }
+
             foreach (var kvp in prop_banknotes)
             {
                 denominations d = (denominations)kvp.Key;
                 prop_banknotes_here[(int)d] = kvp.Value;
             }
+
             /*prop_banknotes_here = prop_banknotes;*/
             foreach (KeyValuePair<int, int> kvp in prop_banknotes_here)
             {
                 sb.Append(kvp.Key.ToString() + "\t:\t " + kvp.Value.ToString() + "\n");
             }
+
             if (sb.Length > 0)
             {
                 sb.Length--; // удалить последний символ - лишний символ новой строки
             }
+
             return sb.ToString();
         }
-        
+
         public string GetBanknotesDenominationsString()
         {
             Dictionary<int, int> prop_banknotes_here = new Dictionary<int, int>();
@@ -158,22 +162,27 @@ namespace Lesson_2._1
             {
                 prop_banknotes_here[(int)d] = 0;
             }
+
             foreach (var kvp in prop_banknotes)
             {
                 denominations d = (denominations)kvp.Key;
                 prop_banknotes_here[(int)d] = kvp.Value;
             }
+
             /*prop_banknotes_here = prop_banknotes;*/
             foreach (KeyValuePair<int, int> kvp in prop_banknotes_here)
             {
                 sb.Append(kvp.Key.ToString() + "\n");
             }
+
             if (sb.Length > 0)
             {
                 sb.Length--; // удалить последний символ - лишний символ новой строки
             }
+
             return sb.ToString();
         }
+
         public string GetBanknotesVaulesString()
         {
             Dictionary<int, int> prop_banknotes_here = new Dictionary<int, int>();
@@ -182,20 +191,24 @@ namespace Lesson_2._1
             {
                 prop_banknotes_here[(int)d] = 0;
             }
+
             foreach (var kvp in prop_banknotes)
             {
                 denominations d = (denominations)kvp.Key;
                 prop_banknotes_here[(int)d] = kvp.Value;
             }
+
             /*prop_banknotes_here = prop_banknotes;*/
             foreach (KeyValuePair<int, int> kvp in prop_banknotes_here)
             {
                 sb.Append(kvp.Value.ToString() + "\n");
             }
+
             if (sb.Length > 0)
             {
                 sb.Length--; // удалить последний символ - лишний символ новой строки
             }
+
             return sb.ToString();
         }
 
@@ -206,8 +219,8 @@ namespace Lesson_2._1
             {
                 sb.Append(item + "\n");
             }
+
             return sb.ToString();
         }
-        
     }
 }

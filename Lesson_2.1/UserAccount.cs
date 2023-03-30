@@ -64,7 +64,7 @@ namespace Lesson_2._1
             AccountType = accountType;
             AccountBalace = accountBalace;
             AvailableCreditLimit = StaticAvailableCreditLimit;
-            StateOfAccount = false;
+            StateOfAccount = true;
         }
 
         public UserAccount(string pass,
@@ -86,7 +86,7 @@ namespace Lesson_2._1
             AccountType = accountType;
             AccountBalace = accountBalace;
             AvailableCreditLimit = AccountType == true ? availableCreditLimit : StaticAvailableCreditLimit;
-            StateOfAccount = false;
+            StateOfAccount = true;
         }
 
 
@@ -113,7 +113,7 @@ namespace Lesson_2._1
             get => _propAccountBalace;
             set => _propAccountBalace = value;
         }
-        
+
         public float AccountBalace_pbl
         {
             get => _propAccountBalace;
@@ -142,12 +142,13 @@ namespace Lesson_2._1
         {
             balance = 0;
             report = "";
-            if (get_report == true) report = GetReport() + "\n";
+            string report_step = "";
+            if (get_report == true) report += GetReport() + "\n" + "\n";
             var dateTimeString = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            report += dateTimeString + ": " + "Пополнение баланса на сумму: " + value.ToString() + "\n";
+            report += dateTimeString + ": " + "Изменение баланса на сумму: " + value.ToString() + "\n" + "\n";
             balance = AccountBalace + value;
             AccountBalace = balance;
-            if (get_report == true) report = GetReport();
+            if (get_report == true) report += GetReport();
 
             return true;
         }
@@ -156,12 +157,13 @@ namespace Lesson_2._1
         {
             balance = 0;
             report = "";
-            if (get_report == true) report = GetReport() + "\n";
+            if (get_report == true) report = GetReport() + "\n\n";
             var dateTimeString = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             if (GetFundsAvailable() > 0)
             {
-                report += dateTimeString + ": " + "Пополнение баланса на сумму: " + value.ToString() + "\n";
+                report += dateTimeString + (": (карта/счёт) ") + this.Id + " Изменение баланса на сумму: " +
+                          value.ToString() + "\n\n";
                 balance = AccountBalace - value;
                 AccountBalace = balance;
                 if (get_report == true) report = GetReport();
@@ -170,7 +172,7 @@ namespace Lesson_2._1
             else
             {
                 if (get_report == true)
-                    report += dateTimeString + ": превышен доступный лимит. \n" +
+                    report += dateTimeString + (": (карта/счёт) ") + this.Id + ": превышен доступный лимит. \n" +
                               "Доступный лимит: " + GetFundsAvailable().ToString();
                 if (get_report == true) report += GetReport();
                 return false;
@@ -179,9 +181,9 @@ namespace Lesson_2._1
 
         public string GetReport()
         {
-            var dateTimeString = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            var temp_str = dateTimeString + ": \nБаланс: " + AccountBalace.ToString() + "\n"+
-                           "Кредитный лимит: " + AvailableCreditLimit.ToString() +"\n"+
+            var dateTimeString = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + (": (карта/счёт) ") + this.Id;
+            var temp_str = dateTimeString + ": \nБаланс: " + AccountBalace.ToString() + "\n" +
+                           "Кредитный лимит: " + AvailableCreditLimit.ToString() + "\n" +
                            "Доступная сумма: " + GetFundsAvailable().ToString();
             return temp_str;
         }

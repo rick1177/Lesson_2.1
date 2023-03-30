@@ -25,7 +25,8 @@ namespace Lesson_2._1
             _userAccauntList = UserAccauntList.GetInstance();
             _ATMs = ATMList.GetInstance();
             comboBox_select_operation.Items.Clear();
-            string[] items = new string[] { "Пополнение наличными", "Снятие наличных", "Пополнение переводом", "Перевод средств" };
+            string[] items = new string[]
+                { "Пополнение наличными", "Снятие наличных", "Пополнение переводом", "Перевод средств" };
             comboBox_select_operation.Items.AddRange(items);
             foreach (var value in values)
             {
@@ -49,7 +50,7 @@ namespace Lesson_2._1
             }
 
             List<UserAccount> all_users = _userAccauntList.GetAllUserAccaunts();
-            
+
             foreach (UserAccount newUser in all_users)
             {
                 object[] row =
@@ -60,11 +61,36 @@ namespace Lesson_2._1
                 };
                 dataGridView_accounts.Rows.Add(row);
             }
-            
+
             dataGridView_accounts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
+
+        public void Refresh_dataGridView_ATMs()
+        {
+            for (int i = dataGridView_ATMs.Rows.Count - 1; i >= 0; i--)
+            {
+                dataGridView_ATMs.Rows.RemoveAt(i);
+            }
+
+            List<UserAccount> all_users = _userAccauntList.GetAllUserAccaunts();
+            List<ATM> all_ATMs = _ATMs.GetAllATMs();
+
+            foreach (ATM _ATM in all_ATMs)
+            {
+                /*object[] row =
+                {
+                    _ATM.ATM_id, _ATM.Banknotes, _ATM.BlockedAccount,
+                };*/
+                dataGridView_ATMs.Rows.Add(_ATM.ATM_id, _ATM.GetBanknotesDenominationsString(),
+                    _ATM.GetBanknotesVaulesString(), _ATM.GetBlockedCardsString());
+                /*dataGridView_accounts.Rows.Add(row);*/
+            }
+            dataGridView_ATMs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dataGridView_ATMs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            dataGridView_ATMs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+        }
         
-        
+
         private void textBox_StartAccountBalace_KeyPress(object sender, KeyPressEventArgs e)
         {
             var ch = e.KeyChar;
@@ -152,7 +178,7 @@ namespace Lesson_2._1
             if (comboBox_choose_account_type.Text == "Кредитный") accountType = true;
             pass = textBox_PAS.Text;
 
-            UserAccount newUser=null;
+            UserAccount newUser = null;
             if (float.TryParse(textBox_StartAccountBalace.Text, out balance))
             {
                 if (float.TryParse(textBox_AvailableCreditLimit.Text, out creditlimit))
@@ -166,9 +192,10 @@ namespace Lesson_2._1
             }
             else
             {
-                newUser = new UserAccount(pass, accountType); ;
+                newUser = new UserAccount(pass, accountType);
+                ;
             }
-            
+
             _userAccauntList.AddUserAccaunt(newUser);
 
             object[] row =
@@ -425,7 +452,6 @@ namespace Lesson_2._1
 
 
             /*dataGridView_ATMs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;*/
-
         }
 
         private void button_chamge_banknotes_Click(object sender, EventArgs e)
@@ -449,12 +475,10 @@ namespace Lesson_2._1
                 button_delete_ATM.Enabled = false;
                 button_extract_cards.Enabled = false;
                 allowTabSwitching = !allowTabSwitching;
-
             }
 
             else
             {
-
                 int rowCount = DataGridView_banknotes.Rows.Count;
                 int[] columnData = new int[rowCount];
                 for (int i = 0; i < rowCount; i++)
@@ -503,7 +527,6 @@ namespace Lesson_2._1
             }
 
             var a = 7;
-
         }
 
         private void button_delete_ATM_Click(object sender, EventArgs e)
@@ -527,7 +550,6 @@ namespace Lesson_2._1
                 if (dataGridView_ATMs.Rows.Count > 0)
                     dataGridView_ATMs.Rows.RemoveAt(dataGridView_ATMs.SelectedRows[0].Index);
             }
-
         }
 
         private void dataGridView_ATMs_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
@@ -551,7 +573,6 @@ namespace Lesson_2._1
                 _ATMs.RemoveATM(rowData[0]);
 
                 // TODO: требуется прописать проверку наличия заблокированных карт и при удалении разблокировать их
-
             }
         }
 
@@ -571,8 +592,17 @@ namespace Lesson_2._1
         {
             comboBox_select_card.Items.Clear();
             List<string> _cardList = _userAccauntList.GetAllUserAccauntIds_fm();
-            string[] _cardList_array = _cardList.ToArray();
-            if (_cardList.Count <= 0) return;
+            List<string> _available_cardList = new List<string>();
+            foreach (var _card in _cardList)
+            {
+                if (_userAccauntList.GetUserAccauntById(_card).StateOfAccount != false)
+                {
+                    _available_cardList.Add(_card);
+                }
+            }
+
+            string[] _cardList_array = _available_cardList.ToArray();
+            if (_available_cardList.Count <= 0) return;
             else
             {
                 comboBox_select_card.Items.AddRange(_cardList_array);
@@ -584,31 +614,37 @@ namespace Lesson_2._1
             List<object> button_tag_list_Objects = new List<object>();
             string ATM_from_comboBox = comboBox_select_ATM.Text;
             string card_from_comboBox = comboBox_select_card.Text;
-            if (ATM_from_comboBox=="" || ATM_from_comboBox==null) return;
-            if (card_from_comboBox=="" || card_from_comboBox==null) return;
+            if (ATM_from_comboBox == "" || ATM_from_comboBox == null) return;
+            if (card_from_comboBox == "" || card_from_comboBox == null) return;
             ATM _ATM = _ATMs.GetATMByATMId(ATM_from_comboBox);
             UserAccount card = _userAccauntList.GetUserAccauntById(card_from_comboBox);
             List<UserAccount> all_accaunts = _userAccauntList.GetAllUserAccaunts();
-            int jha=7;
-            if (_ATM==null || card ==null) return;
+            int jha = 7;
+            if (_ATM == null || card == null) return;
 
             string result = "";
             bool validInput = false;
             int attempts = 0;
             var hash = "";
-            
+
             while (validInput == false && attempts < 3)
             {
                 this.Tag = null;
                 Enter_pin childForm = new Enter_pin(); // создаем экземпляр дочерней формы
                 childForm.StartPosition = FormStartPosition.CenterParent; // позиционирование посреди родительской офрмы
+                childForm.Text = "Введите PIN (попытка " + (attempts + 1).ToString() + "/3)";
                 if (childForm.ShowDialog() == DialogResult.OK) // отображаем дочернюю форму как диалоговое окно
                 {
                     result = childForm
                         .Result; // получаем результат из дочерней формы и устанавливаем его в поле ввода на главной форме
                 }
+                else
+                {
+                    break;
+                }
+
                 var success = UserAccount.GenerateMd5Hash(result, ref hash);
-                
+
                 if (success)
                 {
                     if (card.PasswordHash == hash)
@@ -641,27 +677,26 @@ namespace Lesson_2._1
 
             if (attempts >= 3)
             {
-                
                 // TODO: прописать блокировку карты
-                
-                int b = 7;
+                MessageBox.Show("Извините!\nВы ввели неправильный PIN 3 раза!\nКарта забблокирована");
+                card.StateOfAccount = false;
+                _ATM.AddBlockedAccount(card.Id);
+                Refresh_dataGridView_ATMs();
+                Refresh_dataGridView_accounts();
             }
-            
+
 
             int a = 7;
-
         }
 
         private void button_check_account_information_Click(object sender, EventArgs e)
         {
             List<object> previous_button_tag_list_Objects = button_enter_card.Tag as List<object>;
-            int b = 7;
             if (previous_button_tag_list_Objects == null) return;
             ATM _ATM = previous_button_tag_list_Objects[0] as ATM;
             UserAccount card = previous_button_tag_list_Objects[1] as UserAccount;
-            
-            MessageBox.Show(card.GetReport());
 
+            MessageBox.Show(card.GetReport());
         }
 
         private void button_finish_work_Click(object sender, EventArgs e)
@@ -715,10 +750,34 @@ namespace Lesson_2._1
 
         private void comboBox_select_card_to_DropDown(object sender, EventArgs e)
         {
+            List<object> previous_button_tag_list_Objects = button_enter_card.Tag as List<object>;
+            if (previous_button_tag_list_Objects == null) return;
+            ATM _ATM = previous_button_tag_list_Objects[0] as ATM;
+            UserAccount card = previous_button_tag_list_Objects[1] as UserAccount;
+
             comboBox_select_card_to.Items.Clear();
             List<string> _cardList = _userAccauntList.GetAllUserAccauntIds_fm();
             string[] _cardList_array = _cardList.ToArray();
-            if (_cardList.Count <= 0) return;
+
+            string valueToRemove = card.Id;
+            for (int i = 0; i < _cardList_array.Length; i++)
+            {
+                if (_cardList_array[i] == valueToRemove)
+                {
+                    for (int j = i + 1; j < _cardList_array.Length; j++)
+                    {
+                        _cardList_array[j - 1] = _cardList_array[j];
+                    }
+
+                    Array.Resize(ref _cardList_array, _cardList_array.Length - 1);
+                    break;
+                }
+            }
+
+            if (_cardList.Count <= 0)
+            {
+                return;
+            }
             else
             {
                 comboBox_select_card_to.Items.AddRange(_cardList_array);
@@ -727,7 +786,14 @@ namespace Lesson_2._1
 
         private void comboBox_select_operation_SelectedIndexChanged(object sender, EventArgs e)
         {
+            List<object> previous_button_tag_list_Objects = button_enter_card.Tag as List<object>;
+            int b = 7;
+            if (previous_button_tag_list_Objects == null) return;
+            ATM _ATM = previous_button_tag_list_Objects[0] as ATM;
+            UserAccount card = previous_button_tag_list_Objects[1] as UserAccount;
+
             string selectedItem = comboBox_select_operation.SelectedItem as string;
+
 
             // Выполняем нужное действие в зависимости от выбранного элемента
             switch (selectedItem)
@@ -739,14 +805,17 @@ namespace Lesson_2._1
                     {
                         dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
                     }
+
                     comboBox_select_card_to.Enabled = false;
+                    comboBox_select_card_to.SelectedIndex = -1;
                     dataGridView_q_banknotes.Visible = true;
                     textBox_transaction_summ.Visible = false;
+                    textBox_transaction_summ.Text = null;
                     button_q_banknotes_random.Visible = true;
                     button_q_banknotes_clear.Visible = true;
                     comboBox_select_card_to.Items.Clear();
                     textBox_transaction_summ.Text = null;
-                    
+
                     break;
 
                 case "Снятие наличных":
@@ -756,15 +825,18 @@ namespace Lesson_2._1
                     {
                         dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
                     }
+
                     comboBox_select_card_to.Enabled = false;
+                    comboBox_select_card_to.SelectedIndex = -1;
                     dataGridView_q_banknotes.Visible = true;
                     textBox_transaction_summ.Visible = false;
+                    textBox_transaction_summ.Text = null;
                     button_q_banknotes_random.Visible = true;
                     button_q_banknotes_clear.Visible = true;
                     comboBox_select_card_to.Items.Clear();
                     textBox_transaction_summ.Text = null;
                     break;
-                
+
                 case "Пополнение переводом":
                     label8.Enabled = true;
                     label9.Enabled = true;
@@ -772,15 +844,18 @@ namespace Lesson_2._1
                     {
                         dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
                     }
+
                     comboBox_select_card_to.Enabled = true;
+                    comboBox_select_card_to.SelectedIndex = -1;
                     dataGridView_q_banknotes.Visible = false;
                     textBox_transaction_summ.Visible = true;
+                    textBox_transaction_summ.Text = null;
                     button_q_banknotes_random.Visible = false;
                     button_q_banknotes_clear.Visible = false;
                     comboBox_select_card_to.Items.Clear();
                     textBox_transaction_summ.Text = null;
                     break;
-                
+
                 case "Перевод средств":
                     label8.Enabled = true;
                     label9.Enabled = true;
@@ -788,35 +863,52 @@ namespace Lesson_2._1
                     {
                         dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
                     }
+
                     comboBox_select_card_to.Enabled = true;
+                    comboBox_select_card_to.SelectedIndex = -1;
                     dataGridView_q_banknotes.Visible = false;
                     textBox_transaction_summ.Visible = true;
+                    textBox_transaction_summ.Text = null;
                     button_q_banknotes_random.Visible = false;
                     button_q_banknotes_clear.Visible = false;
                     comboBox_select_card_to.Items.Clear();
                     textBox_transaction_summ.Text = null;
-                    break;
 
+                    break;
             }
         }
 
         private void button_start_operation_Click(object sender, EventArgs e)
         {
+            bool report_need = checkBox_report.Checked;
             string selectedItem = comboBox_select_operation.SelectedItem as string;
-            
+            if (selectedItem == "" || selectedItem == null)
+            {
+                MessageBox.Show("Вы должны выбрать вид операции");
+                return;
+            }
+
+            ;
+
             float newbalance = 0f;
             string report = "";
+            string full_report = "";
             UserAccount crd = null;
-            
+
             List<object> previous_button_tag_list_Objects = button_enter_card.Tag as List<object>;
             int b = 7;
             if (previous_button_tag_list_Objects == null) return;
             ATM _ATM = previous_button_tag_list_Objects[0] as ATM;
             UserAccount card = previous_button_tag_list_Objects[1] as UserAccount;
             //TODO: прописать действия на случай заблокированной карты
-            
-            //TODO: обработать ошибку пустого поля
-            float summ = float.Parse(textBox_transaction_summ.Text);
+
+            float summ = 0;
+            if (!float.TryParse(textBox_transaction_summ.Text, out summ))
+            {
+                textBox_transaction_summ.Text = "0";
+                summ = 0;
+            }
+
             UserAccount card_to = null;
 
             string card_to_string = comboBox_select_card_to.Text;
@@ -824,7 +916,7 @@ namespace Lesson_2._1
             {
                 card_to = _userAccauntList.GetUserAccauntById(card_to_string);
             }
-            
+
 
             // чтение таблицы с номиналами купюр
             int rowCount = dataGridView_q_banknotes.Rows.Count;
@@ -860,9 +952,8 @@ namespace Lesson_2._1
                     }
                 }
             }
-            
-            
-            
+
+
             switch (selectedItem)
             {
                 case "Пополнение наличными":
@@ -874,44 +965,76 @@ namespace Lesson_2._1
                     break;
 
                 case "Пополнение переводом":
-                    // TODO: прописать действия на случай заблокированной карты
-                    
+                    if (card_to != null)
+                    {
+                        if (card_to.StateOfAccount == false)
+                        {
+                            MessageBox.Show("Карта " + card_to.Id + " заблокирована!");
+                            break;
+                        }
+
+                        if (card_to.GetFundsAvailable() < summ)
+                        {
+                            MessageBox.Show("На карте/счёте " + card_to.Id + " не достаточно средств для операции!");
+                            break;
+                        }
+
+                        var success = card.TopOnCard(summ, out newbalance, out report, report_need);
+                        card.AccountBalace_pbl = newbalance;
+                        full_report += report + "\n" + "\n";
+                        full_report += "------------------------------------------------------------" + "\n" + "\n";
+                        success = card_to.TopOnCard(-1 * summ, out newbalance, out report, report_need);
+                        card_to.AccountBalace_pbl = newbalance;
+                        full_report += report;
+                        Refresh_dataGridView_accounts();
+                        if (report_need) MessageBox.Show(full_report.Replace("\n", Environment.NewLine));
+                    }
+                    else
+                    {
+                        MessageBox.Show("Вы не выбрали карту для совершения операции");
+                        break;
+                    }
+
                     break;
 
                 case "Перевод средств":
                     // TODO: прописать действия на случай заблокированной карты
-                    
-                    if (card_to != null && card.GetFundsAvailable() > summ)
+                    if (card.GetFundsAvailable() < summ)
                     {
-                        var success = card.TopOnCard(summ, out newbalance, out report, false);
-                        card_to.AccountBalace_pbl = newbalance;
-                        success = card.TopOnCard(-1*summ, out newbalance, out report, false);
-                        card.AccountBalace_pbl = newbalance;
-                        Refresh_dataGridView_accounts();
+                        MessageBox.Show("На карте/счёте " + card.Id + " не достаточно средств для операции!");
+                        break;
                     }
-                    break;
 
-
-                    
-
-                    /*if (comboBox_select_operation.Text == "Пополнение")
+                    if (card_to != null)
                     {
-                        float ask = summ % 10;
-                        if (ask == 0f)
+                        if (card_to.StateOfAccount == false)
                         {
-                            var success = card.TopOnCard(summ, out newbalance, out report, false);
-                            card.AccountBalace_pbl = newbalance;
-                            Refresh_dataGridView_accounts();
-                            MessageBox.Show("Отработало");
-                        }
-                        else
-                        {
-                            MessageBox.Show("Можно вводить сумму кратную 10");
-                            textBox_transaction_summ.Text = null;
+                            MessageBox.Show("Карта " + card_to.Id + " заблокирована!");
+                            break;
                         }
 
-                    }*/
+                        var success = card_to.TopOnCard(summ, out newbalance, out report, report_need);
+                        card_to.AccountBalace_pbl = newbalance;
+                        full_report += report + "\n" + "\n";
+                        full_report += "------------------------------------------------------------" + "\n" + "\n";
+                        success = card.TopOnCard(-1 * summ, out newbalance, out report, report_need);
+                        card.AccountBalace_pbl = newbalance;
+                        full_report += report;
+                        Refresh_dataGridView_accounts();
+                        if (report_need) MessageBox.Show(full_report.Replace("\n", Environment.NewLine));
+                    }
+                    else
+                    {
+                        MessageBox.Show("Вы не выбрали карту для совершения операции");
+                        break;
+                    }
+
+                    break;
             }
+
+            comboBox_select_operation.SelectedItem = null;
+            comboBox_select_card_to.SelectedIndex = -1;
+            textBox_transaction_summ.Text = null;
         }
 
         private void button_DataGridView_banknotes_update_Click(object sender, EventArgs e)
@@ -921,9 +1044,7 @@ namespace Lesson_2._1
             {
                 int value = random.Next(0, 1000);
                 DataGridView_banknotes.Rows[i].Cells[1].Value = value.ToString();
-                
             }
-                
         }
 
         private void button_DataGridView_banknotes_clear_Click(object sender, EventArgs e)
@@ -941,7 +1062,6 @@ namespace Lesson_2._1
             {
                 int value = random.Next(0, 1000);
                 dataGridView_q_banknotes.Rows[i].Cells[1].Value = value.ToString();
-                
             }
         }
 
@@ -951,6 +1071,12 @@ namespace Lesson_2._1
             {
                 dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
             }
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBox_select_ATM.SelectedIndex = -1;
+            comboBox_select_card.SelectedIndex = -1;
         }
     }
 }
