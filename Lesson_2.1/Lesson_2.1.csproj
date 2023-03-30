@@ -93,5 +93,10 @@
     <ItemGroup>
         <None Include="App.config" />
     </ItemGroup>
+    <ItemGroup>
+      <Content Include="Resources\erase_file_icon_icons.png" />
+      <Content Include="Resources\erase_file_icon_icons1.png" />
+      <Content Include="Resources\_3706881_control_random_shuffle_108703.png" />
+    </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

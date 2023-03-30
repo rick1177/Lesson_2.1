@@ -14,9 +14,9 @@ namespace Lesson_2._1
 
         // True - кредитная, False - дебетовая
         private bool _propAccountType;
-        private float _propAccountBalace;
+        private static float _propAccountBalace;
 
-        private float _propAvailableCreditLimit;
+        private static float _propAvailableCreditLimit;
 
         // если True, до доступен, False - не доступен
         private bool _propStateOfAccount;
@@ -113,6 +113,12 @@ namespace Lesson_2._1
             get => _propAccountBalace;
             set => _propAccountBalace = value;
         }
+        
+        public float AccountBalace_pbl
+        {
+            get => _propAccountBalace;
+            set => _propAccountBalace = value;
+        }
 
         public float AvailableCreditLimit
         {
@@ -174,7 +180,7 @@ namespace Lesson_2._1
         public string GetReport()
         {
             var dateTimeString = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            var temp_str = dateTimeString + ": \n Баланс: " + AccountBalace.ToString() + "\n"+
+            var temp_str = dateTimeString + ": \nБаланс: " + AccountBalace.ToString() + "\n"+
                            "Кредитный лимит: " + AvailableCreditLimit.ToString() +"\n"+
                            "Доступная сумма: " + GetFundsAvailable().ToString();
             return temp_str;

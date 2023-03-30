@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace Lesson_2._1
 {
@@ -23,12 +24,16 @@ namespace Lesson_2._1
             InitializeComponent();
             _userAccauntList = UserAccauntList.GetInstance();
             _ATMs = ATMList.GetInstance();
+            comboBox_select_operation.Items.Clear();
+            string[] items = new string[] { "Пополнение наличными", "Снятие наличных", "Пополнение переводом", "Перевод средств" };
+            comboBox_select_operation.Items.AddRange(items);
             foreach (var value in values)
             {
                 // Преобразование значения в тип, который может быть добавлен в DataGridView
                 var convertedValue = Convert.ChangeType(value, typeof(int));
 
                 // Добавление значения в DataGridView
+                dataGridView_q_banknotes.Rows.Add(convertedValue);
                 DataGridView_banknotes.Rows.Add(convertedValue);
             }
 
@@ -36,6 +41,30 @@ namespace Lesson_2._1
         }
 
 
+        public void Refresh_dataGridView_accounts()
+        {
+            for (int i = dataGridView_accounts.Rows.Count - 1; i >= 0; i--)
+            {
+                dataGridView_accounts.Rows.RemoveAt(i);
+            }
+
+            List<UserAccount> all_users = _userAccauntList.GetAllUserAccaunts();
+            
+            foreach (UserAccount newUser in all_users)
+            {
+                object[] row =
+                {
+                    newUser.Id, newUser.PasswordHash, newUser.AccountType,
+                    newUser.AccountBalace.ToString(), newUser.AvailableCreditLimit.ToString(),
+                    newUser.StateOfAccount
+                };
+                dataGridView_accounts.Rows.Add(row);
+            }
+            
+            dataGridView_accounts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+        }
+        
+        
         private void textBox_StartAccountBalace_KeyPress(object sender, KeyPressEventArgs e)
         {
             var ch = e.KeyChar;
@@ -123,25 +152,24 @@ namespace Lesson_2._1
             if (comboBox_choose_account_type.Text == "Кредитный") accountType = true;
             pass = textBox_PAS.Text;
 
-            UserAccount newUser;
+            UserAccount newUser=null;
             if (float.TryParse(textBox_StartAccountBalace.Text, out balance))
             {
                 if (float.TryParse(textBox_AvailableCreditLimit.Text, out creditlimit))
                 {
                     newUser = new UserAccount(pass, accountType, balance, creditlimit);
-                    _userAccauntList.AddUserAccaunt(newUser);
                 }
                 else
                 {
                     newUser = new UserAccount(pass, accountType, balance);
-                    _userAccauntList.AddUserAccaunt(newUser);
                 }
             }
             else
             {
-                newUser = new UserAccount(pass, accountType);
-                _userAccauntList.AddUserAccaunt(newUser);
+                newUser = new UserAccount(pass, accountType); ;
             }
+            
+            _userAccauntList.AddUserAccaunt(newUser);
 
             object[] row =
             {
@@ -149,6 +177,7 @@ namespace Lesson_2._1
                 newUser.AccountBalace.ToString(), newUser.AvailableCreditLimit.ToString(),
                 newUser.StateOfAccount
             };
+            List<UserAccount> all_accaunts = _userAccauntList.GetAllUserAccaunts();
             dataGridView_accounts.Rows.Add(row);
             dataGridView_accounts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
@@ -559,6 +588,8 @@ namespace Lesson_2._1
             if (card_from_comboBox=="" || card_from_comboBox==null) return;
             ATM _ATM = _ATMs.GetATMByATMId(ATM_from_comboBox);
             UserAccount card = _userAccauntList.GetUserAccauntById(card_from_comboBox);
+            List<UserAccount> all_accaunts = _userAccauntList.GetAllUserAccaunts();
+            int jha=7;
             if (_ATM==null || card ==null) return;
 
             string result = "";
@@ -585,6 +616,7 @@ namespace Lesson_2._1
                         button_tag_list_Objects.Add(_ATM);
                         button_tag_list_Objects.Add(card);
                         this.button_enter_card.Tag = button_tag_list_Objects;
+                        button_enter_card.Enabled = false;
                         panel6.Visible = true;
                         label5.Enabled = false;
                         label6.Enabled = false;
@@ -636,6 +668,7 @@ namespace Lesson_2._1
             panel6.Visible = false;
             label5.Enabled = true;
             label6.Enabled = true;
+            button_enter_card.Enabled = true;
             comboBox_select_ATM.Enabled = true;
             comboBox_select_card.Enabled = true;
             allowTabSwitching = !allowTabSwitching;
@@ -676,6 +709,246 @@ namespace Lesson_2._1
             {
                 // Блокируем все остальные символы
                 e.Handled = true;
+            }
+        }
+
+        private void comboBox_select_card_to_DropDown(object sender, EventArgs e)
+        {
+            comboBox_select_card_to.Items.Clear();
+            List<string> _cardList = _userAccauntList.GetAllUserAccauntIds_fm();
+            string[] _cardList_array = _cardList.ToArray();
+            if (_cardList.Count <= 0) return;
+            else
+            {
+                comboBox_select_card_to.Items.AddRange(_cardList_array);
+            }
+        }
+
+        private void comboBox_select_operation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selectedItem = comboBox_select_operation.SelectedItem as string;
+
+            // Выполняем нужное действие в зависимости от выбранного элемента
+            switch (selectedItem)
+            {
+                case "Пополнение наличными":
+                    label8.Enabled = false;
+                    label9.Enabled = true;
+                    for (int i = 0; i < dataGridView_q_banknotes.Rows.Count; i++)
+                    {
+                        dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
+                    }
+                    comboBox_select_card_to.Enabled = false;
+                    dataGridView_q_banknotes.Visible = true;
+                    textBox_transaction_summ.Visible = false;
+                    button_q_banknotes_random.Visible = true;
+                    button_q_banknotes_clear.Visible = true;
+                    comboBox_select_card_to.Items.Clear();
+                    textBox_transaction_summ.Text = null;
+                    
+                    break;
+
+                case "Снятие наличных":
+                    label8.Enabled = false;
+                    label9.Enabled = true;
+                    for (int i = 0; i < dataGridView_q_banknotes.Rows.Count; i++)
+                    {
+                        dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
+                    }
+                    comboBox_select_card_to.Enabled = false;
+                    dataGridView_q_banknotes.Visible = true;
+                    textBox_transaction_summ.Visible = false;
+                    button_q_banknotes_random.Visible = true;
+                    button_q_banknotes_clear.Visible = true;
+                    comboBox_select_card_to.Items.Clear();
+                    textBox_transaction_summ.Text = null;
+                    break;
+                
+                case "Пополнение переводом":
+                    label8.Enabled = true;
+                    label9.Enabled = true;
+                    for (int i = 0; i < dataGridView_q_banknotes.Rows.Count; i++)
+                    {
+                        dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
+                    }
+                    comboBox_select_card_to.Enabled = true;
+                    dataGridView_q_banknotes.Visible = false;
+                    textBox_transaction_summ.Visible = true;
+                    button_q_banknotes_random.Visible = false;
+                    button_q_banknotes_clear.Visible = false;
+                    comboBox_select_card_to.Items.Clear();
+                    textBox_transaction_summ.Text = null;
+                    break;
+                
+                case "Перевод средств":
+                    label8.Enabled = true;
+                    label9.Enabled = true;
+                    for (int i = 0; i < dataGridView_q_banknotes.Rows.Count; i++)
+                    {
+                        dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
+                    }
+                    comboBox_select_card_to.Enabled = true;
+                    dataGridView_q_banknotes.Visible = false;
+                    textBox_transaction_summ.Visible = true;
+                    button_q_banknotes_random.Visible = false;
+                    button_q_banknotes_clear.Visible = false;
+                    comboBox_select_card_to.Items.Clear();
+                    textBox_transaction_summ.Text = null;
+                    break;
+
+            }
+        }
+
+        private void button_start_operation_Click(object sender, EventArgs e)
+        {
+            string selectedItem = comboBox_select_operation.SelectedItem as string;
+            
+            float newbalance = 0f;
+            string report = "";
+            UserAccount crd = null;
+            
+            List<object> previous_button_tag_list_Objects = button_enter_card.Tag as List<object>;
+            int b = 7;
+            if (previous_button_tag_list_Objects == null) return;
+            ATM _ATM = previous_button_tag_list_Objects[0] as ATM;
+            UserAccount card = previous_button_tag_list_Objects[1] as UserAccount;
+            //TODO: прописать действия на случай заблокированной карты
+            
+            //TODO: обработать ошибку пустого поля
+            float summ = float.Parse(textBox_transaction_summ.Text);
+            UserAccount card_to = null;
+
+            string card_to_string = comboBox_select_card_to.Text;
+            if (card_to_string != "" && card_to_string != null)
+            {
+                card_to = _userAccauntList.GetUserAccauntById(card_to_string);
+            }
+            
+
+            // чтение таблицы с номиналами купюр
+            int rowCount = dataGridView_q_banknotes.Rows.Count;
+            int[] columnData = new int[rowCount];
+            for (int i = 0; i < rowCount; i++)
+            {
+                DataGridViewCell cell = dataGridView_q_banknotes[1, i];
+                if (cell.Value != null)
+                {
+                    columnData[i] = int.Parse(cell.Value.ToString());
+                }
+            }
+
+            int count = 0;
+            foreach (int element in columnData)
+            {
+                if (element != 0)
+                {
+                    count++;
+                }
+            }
+
+            var prop_banknotes = new Dictionary<ATM.denominations, int>();
+            var values = Enum.GetValues(typeof(ATM.denominations)).Cast<ATM.denominations>().ToArray();
+
+            if (count > 0)
+            {
+                for (int i = 0; i < values.Length; i++)
+                {
+                    if (columnData[i] > 0)
+                    {
+                        prop_banknotes.Add(values[i], columnData[i]);
+                    }
+                }
+            }
+            
+            
+            
+            switch (selectedItem)
+            {
+                case "Пополнение наличными":
+
+                    break;
+
+                case "Снятие наличных":
+
+                    break;
+
+                case "Пополнение переводом":
+                    // TODO: прописать действия на случай заблокированной карты
+                    
+                    break;
+
+                case "Перевод средств":
+                    // TODO: прописать действия на случай заблокированной карты
+                    
+                    if (card_to != null && card.GetFundsAvailable() > summ)
+                    {
+                        var success = card.TopOnCard(summ, out newbalance, out report, false);
+                        card_to.AccountBalace_pbl = newbalance;
+                        success = card.TopOnCard(-1*summ, out newbalance, out report, false);
+                        card.AccountBalace_pbl = newbalance;
+                        Refresh_dataGridView_accounts();
+                    }
+                    break;
+
+
+                    
+
+                    /*if (comboBox_select_operation.Text == "Пополнение")
+                    {
+                        float ask = summ % 10;
+                        if (ask == 0f)
+                        {
+                            var success = card.TopOnCard(summ, out newbalance, out report, false);
+                            card.AccountBalace_pbl = newbalance;
+                            Refresh_dataGridView_accounts();
+                            MessageBox.Show("Отработало");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Можно вводить сумму кратную 10");
+                            textBox_transaction_summ.Text = null;
+                        }
+
+                    }*/
+            }
+        }
+
+        private void button_DataGridView_banknotes_update_Click(object sender, EventArgs e)
+        {
+            Random random = new Random();
+            for (var i = 0; i < DataGridView_banknotes.Rows.Count; i++)
+            {
+                int value = random.Next(0, 1000);
+                DataGridView_banknotes.Rows[i].Cells[1].Value = value.ToString();
+                
+            }
+                
+        }
+
+        private void button_DataGridView_banknotes_clear_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < DataGridView_banknotes.Rows.Count; i++)
+            {
+                DataGridView_banknotes.Rows[i].Cells[1].Value = null;
+            }
+        }
+
+        private void button_q_banknotes_random_Click(object sender, EventArgs e)
+        {
+            Random random = new Random();
+            for (var i = 0; i < dataGridView_q_banknotes.Rows.Count; i++)
+            {
+                int value = random.Next(0, 1000);
+                dataGridView_q_banknotes.Rows[i].Cells[1].Value = value.ToString();
+                
+            }
+        }
+
+        private void button_q_banknotes_clear_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < dataGridView_q_banknotes.Rows.Count; i++)
+            {
+                dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
             }
         }
     }
