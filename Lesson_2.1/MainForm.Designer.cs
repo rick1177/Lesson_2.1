@@ -63,6 +63,8 @@ namespace Lesson_2._1
             this.button_delete_ATM = new System.Windows.Forms.Button();
             this.miniToolStrip = new System.Windows.Forms.MenuStrip();
             this.менюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ImportDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExportDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tab_card_accounts = new System.Windows.Forms.TabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -387,9 +389,24 @@ namespace Lesson_2._1
             // 
             // менюToolStripMenuItem
             // 
+            this.менюToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.ImportDataToolStripMenuItem, this.ExportDataToolStripMenuItem });
             this.менюToolStripMenuItem.Name = "менюToolStripMenuItem";
             this.менюToolStripMenuItem.Size = new System.Drawing.Size(63, 28);
             this.менюToolStripMenuItem.Text = "Меню";
+            // 
+            // ImportDataToolStripMenuItem
+            // 
+            this.ImportDataToolStripMenuItem.Name = "ImportDataToolStripMenuItem";
+            this.ImportDataToolStripMenuItem.Size = new System.Drawing.Size(248, 24);
+            this.ImportDataToolStripMenuItem.Text = "Импортировать данные";
+            this.ImportDataToolStripMenuItem.Click += new System.EventHandler(this.ImportATMsToolStripMenuItem_Click);
+            // 
+            // ExportDataToolStripMenuItem
+            // 
+            this.ExportDataToolStripMenuItem.Name = "ExportDataToolStripMenuItem";
+            this.ExportDataToolStripMenuItem.Size = new System.Drawing.Size(248, 24);
+            this.ExportDataToolStripMenuItem.Text = "Экспортировать данные";
+            this.ExportDataToolStripMenuItem.Click += new System.EventHandler(this.ExportDataToolStripMenuItem_Click);
             // 
             // tab_card_accounts
             // 
@@ -932,6 +949,7 @@ namespace Lesson_2._1
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.MinimumSize = new System.Drawing.Size(799, 649);
             this.Name = "MainForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.tab_ATMs.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_ATMs)).EndInit();
@@ -952,6 +970,10 @@ namespace Lesson_2._1
             this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
         }
+
+        private System.Windows.Forms.ToolStripMenuItem ExportDataToolStripMenuItem;
+
+        private System.Windows.Forms.ToolStripMenuItem ImportDataToolStripMenuItem;
 
         private System.Windows.Forms.CheckBox checkBox_report;
 

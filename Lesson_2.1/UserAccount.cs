@@ -24,6 +24,28 @@ namespace Lesson_2._1
         public static float StaticStartBalace = 0;
         public static float StaticAvailableCreditLimit = 0;
 
+
+        public UserAccount()
+        {
+            string temp_str = "";
+            temp_str = GenerateRandomString(20);
+            List<string> existingUserAccounts = UserAccauntList.GetAllUserAccauntIds();
+            while (existingUserAccounts.Contains(temp_str))
+            {
+                temp_str = GenerateRandomString(20);
+            }
+
+            Id = temp_str;
+            var hash = "";
+            var success = GenerateMd5Hash("0000", ref hash);
+            if (!success) throw new ArgumentException("Пин долже состоять из 4-х цифр");
+            PasswordHash = hash;
+            AccountType = true;
+            AccountBalace = StaticStartBalace;
+            AvailableCreditLimit = StaticAvailableCreditLimit;
+            StateOfAccount = true;
+        }
+
         public UserAccount(string pass, bool accountType)
         {
             string temp_str = "";

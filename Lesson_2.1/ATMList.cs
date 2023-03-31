@@ -34,6 +34,16 @@ namespace Lesson_2._1
                 }
         }
 
+        public void RemoveAlATM()
+        {
+            GetInstance()._ATMs.Clear();
+            /*foreach (var _ATM in GetInstance()._ATMs)
+            {
+                GetInstance()._ATMs.Remove(_ATM);
+            }*/
+        }
+
+
         public ATM GetATMByATMId(string ATM_id)
         {
             foreach (var _ATM_item in GetInstance()._ATMs)

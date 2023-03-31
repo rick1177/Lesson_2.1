@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace Lesson_2._1
 {
@@ -81,6 +82,7 @@ namespace Lesson_2._1
             /*prop_banknotes = new Dictionary<denominations, int>(); */
             /*blocked_account = new List<string>();*/
         }
+
 
         public string ATM_id
         {

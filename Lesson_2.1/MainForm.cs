@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,6 +9,8 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.ApplicationServices;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Lesson_2._1
 {
@@ -15,6 +18,7 @@ namespace Lesson_2._1
     {
         private UserAccauntList _userAccauntList;
         private ATMList _ATMs;
+        private bool _dataChanged = false;
         private bool allowTabSwitching = true;
 
         private Array values = Enum.GetValues(typeof(ATM.denominations));
@@ -168,6 +172,7 @@ namespace Lesson_2._1
 
         private void button_add_accaunt_Click(object sender, EventArgs e)
         {
+            _dataChanged = true;
             var accountType = false;
             string pass;
             float balance;
@@ -212,6 +217,7 @@ namespace Lesson_2._1
 
         private void button_change_status_Click(object sender, EventArgs e)
         {
+            _dataChanged = true;
             if (dataGridView_accounts.CurrentRow == null) return;
             var rowData = new string[dataGridView_accounts.Columns.Count];
             for (var i = 0; i < dataGridView_accounts.Columns.Count; i++)
@@ -238,6 +244,7 @@ namespace Lesson_2._1
 
         private void button_delete_account_Click(object sender, EventArgs e)
         {
+            _dataChanged = true;
             if (dataGridView_accounts.CurrentRow == null) return;
 
             var result = MessageBox.Show("Вы действительно хотите удалить эту строку?", "Подтверждение удаления",
@@ -290,6 +297,7 @@ namespace Lesson_2._1
 
         private void button_change_accaunt_Click(object sender, EventArgs e)
         {
+            _dataChanged = true;
             if (dataGridView_accounts.CurrentRow == null) return;
 
             var rowData = new string[dataGridView_accounts.Columns.Count];
@@ -421,6 +429,7 @@ namespace Lesson_2._1
 
         private void button_add_ATM_Click(object sender, EventArgs e)
         {
+            _dataChanged = true;
             int columnIndex = 1;
             int rowCount = DataGridView_banknotes.Rows.Count;
             int[] columnData = new int[rowCount];
@@ -481,6 +490,7 @@ namespace Lesson_2._1
 
         private void button_chamge_banknotes_Click(object sender, EventArgs e)
         {
+            _dataChanged = true;
             if (dataGridView_ATMs.CurrentRow == null) return;
             var rowData = new string[dataGridView_ATMs.Columns.Count];
             for (var i = 0; i < dataGridView_ATMs.Columns.Count; i++)
@@ -556,6 +566,7 @@ namespace Lesson_2._1
 
         private void button_delete_ATM_Click(object sender, EventArgs e)
         {
+            _dataChanged = true;
             if (dataGridView_ATMs.CurrentRow == null) return;
 
             var result = MessageBox.Show("Вы действительно хотите удалить эту строку?", "Подтверждение удаления",
@@ -577,9 +588,9 @@ namespace Lesson_2._1
                     temp_user_accaunt = _userAccauntList.GetUserAccauntById(item);
                     temp_user_accaunt.StateOfAccount = true;
                 }
-                
+
                 Refresh_dataGridView_accounts();
-                
+
                 _ATMs.RemoveATM(rowData[0]);
 
                 // TODO: требуется прописать проверку наличия заблокированных карт и при удалении разблокировать их
@@ -606,6 +617,18 @@ namespace Lesson_2._1
                 for (var i = 0; i < dataGridView_ATMs.Columns.Count; i++)
                     rowData[i] = dataGridView_ATMs.SelectedRows[0].Cells[i].Value.ToString();
                 var _ATM = _ATMs.GetATMByATMId(rowData[0]);
+
+                var blocked_cards = _ATM.BlockedAccount;
+                var all_account = _userAccauntList.GetAllUserAccauntIds_fm();
+
+                UserAccount temp_user_accaunt;
+                foreach (var item in blocked_cards)
+                {
+                    temp_user_accaunt = _userAccauntList.GetUserAccauntById(item);
+                    temp_user_accaunt.StateOfAccount = true;
+                }
+
+                Refresh_dataGridView_accounts();
 
                 _ATMs.RemoveATM(rowData[0]);
 
@@ -753,6 +776,7 @@ namespace Lesson_2._1
 
         private void button_extract_cards_Click(object sender, EventArgs e)
         {
+            _dataChanged = true;
             if (dataGridView_ATMs.CurrentRow == null) return;
 
             var result = MessageBox.Show("Вы действительно хотите извлеч карты из банкомата?", "Подтверждение удаления",
@@ -776,16 +800,15 @@ namespace Lesson_2._1
                     temp_user_accaunt.StateOfAccount = true;
                     _ATM.RemoveBlockedAccount(item);
                 }
-                
+
                 Refresh_dataGridView_accounts();
-                
+
                 // Проверяем, есть ли выбранная строка
-                if (dataGridView_ATMs.CurrentRow != null) 
+                if (dataGridView_ATMs.CurrentRow != null)
                 {
                     // Обращаемся к 4-й ячейке в текущей строке и присваиваем ей пустую строку
                     dataGridView_ATMs.CurrentRow.Cells[3].Value = "";
                 }
-                
             }
         }
 
@@ -954,6 +977,7 @@ namespace Lesson_2._1
 
         private void button_start_operation_Click(object sender, EventArgs e)
         {
+            _dataChanged = true;
             bool report_need = checkBox_report.Checked;
             string selectedItem = comboBox_select_operation.SelectedItem as string;
             if (selectedItem == "" || selectedItem == null)
@@ -1279,6 +1303,112 @@ namespace Lesson_2._1
         {
             comboBox_select_ATM.SelectedIndex = -1;
             comboBox_select_card.SelectedIndex = -1;
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_dataChanged)
+            {
+                var result = MessageBox.Show("Желаете сохранить данные в файл??", "Сохранить изменения",
+                    MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Yes)
+                {
+                    SaveChangesToFile();
+                }
+                else if (result == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
+
+        private void SaveChangesToFile()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Bankbase files (*.bankbase)|*.bankbase";
+            saveFileDialog.Title = "Save bankbase file";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    BankData bankData = new BankData
+                    {
+                        ATMs = _ATMs.GetAllATMs(),
+                        UserAccounts = _userAccauntList.GetAllUserAccaunts()
+                    };
+                    JsonSerializerSettings settings = new JsonSerializerSettings
+                    {
+                        DefaultValueHandling = DefaultValueHandling.Ignore
+                    };
+                    string serialized = JsonConvert.SerializeObject(bankData, Formatting.Indented, settings);
+                    File.WriteAllText(saveFileDialog.FileName, serialized);
+
+                    _dataChanged = false;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error saving changes: {ex.Message}", "Save Changes", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void ImportATMsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Желаете импортировать данные?\nТекущие данные будут потеряны.", "Сохранить изменения",
+                MessageBoxButtons.YesNo);
+            if (result == DialogResult.Yes)
+            {
+                _ATMs.RemoveAlATM();
+                _userAccauntList.RemoveUserAllAccaunts();
+                
+                List<ATM> all_ATMs;
+                List<UserAccount> all_UserAccounts;
+
+                using (var openFileDialog = new OpenFileDialog())
+                {
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        try
+                        {
+                            using (StreamReader r = new StreamReader(openFileDialog.FileName))
+                            {
+                                string json = r.ReadToEnd();
+                                BankData bankData = JsonConvert.DeserializeObject<BankData>(json);
+                                all_ATMs = bankData.ATMs;
+                                all_UserAccounts = bankData.UserAccounts;
+
+                                foreach (var ATM in all_ATMs)
+                                {
+                                    _ATMs.AddATM(ATM);
+                                }
+                                foreach (var _UserAccounts in all_UserAccounts)
+                                {
+                                    _userAccauntList.AddUserAccaunt(_UserAccounts);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error loading data: {ex.Message}", "Load Data", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                        }
+                    }
+                }
+                Refresh_dataGridView_ATMs();
+                Refresh_dataGridView_accounts();
+                _dataChanged = false;
+            }
+            else if (result == DialogResult.No)
+            {
+                return;
+            }
+            
+        }
+
+        private void ExportDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveChangesToFile();
         }
     }
 }

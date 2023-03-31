@@ -34,6 +34,16 @@ namespace Lesson_2._1
                 }
         }
 
+        public void RemoveUserAllAccaunts()
+        {
+            GetInstance()._userAccaunts.Clear();
+            /*foreach (var userAccaunt in GetInstance()._userAccaunts)
+            {
+                GetInstance()._userAccaunts.Remove(userAccaunt);
+            }*/
+        }
+
+
         public UserAccount GetUserAccauntById(string id)
         {
             foreach (var userAccaunt in GetInstance()._userAccaunts)
