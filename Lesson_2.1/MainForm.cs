@@ -85,11 +85,12 @@ namespace Lesson_2._1
                     _ATM.GetBanknotesVaulesString(), _ATM.GetBlockedCardsString());
                 /*dataGridView_accounts.Rows.Add(row);*/
             }
+
             dataGridView_ATMs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             dataGridView_ATMs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dataGridView_ATMs.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
-        
+
 
         private void textBox_StartAccountBalace_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -221,6 +222,18 @@ namespace Lesson_2._1
             useraccount.StateOfAccount = useraccount.StateOfAccount == true ? false : true;
 
             dataGridView_accounts.SelectedRows[0].Cells[5].Value = useraccount.StateOfAccount;
+
+            var all_ATMs = _ATMs.GetAllATMs();
+            foreach (var ATM in all_ATMs)
+            {
+                var blocked_cards = ATM.GetBlockedCardsString();
+                if (blocked_cards.Contains(rowData[0]))
+                {
+                    ATM.RemoveBlockedAccount(rowData[0]);
+                }
+            }
+
+            Refresh_dataGridView_ATMs();
         }
 
         private void button_delete_account_Click(object sender, EventArgs e)
@@ -241,6 +254,18 @@ namespace Lesson_2._1
 
                 if (dataGridView_accounts.Rows.Count > 0)
                     dataGridView_accounts.Rows.RemoveAt(dataGridView_accounts.SelectedRows[0].Index);
+
+                var all_ATMs = _ATMs.GetAllATMs();
+                foreach (var ATM in all_ATMs)
+                {
+                    var blocked_cards = ATM.GetBlockedCardsString();
+                    if (blocked_cards.Contains(rowData[0]))
+                    {
+                        ATM.RemoveBlockedAccount(rowData[0]);
+                    }
+                }
+
+                Refresh_dataGridView_ATMs();
             }
         }
 
@@ -543,6 +568,18 @@ namespace Lesson_2._1
                     rowData[i] = dataGridView_ATMs.SelectedRows[0].Cells[i].Value.ToString();
                 var _ATM = _ATMs.GetATMByATMId(rowData[0]);
 
+                var blocked_cards = _ATM.BlockedAccount;
+                var all_account = _userAccauntList.GetAllUserAccauntIds_fm();
+
+                UserAccount temp_user_accaunt;
+                foreach (var item in blocked_cards)
+                {
+                    temp_user_accaunt = _userAccauntList.GetUserAccauntById(item);
+                    temp_user_accaunt.StateOfAccount = true;
+                }
+                
+                Refresh_dataGridView_accounts();
+                
                 _ATMs.RemoveATM(rowData[0]);
 
                 // TODO: требуется прописать проверку наличия заблокированных карт и при удалении разблокировать их
@@ -680,6 +717,10 @@ namespace Lesson_2._1
                 // TODO: прописать блокировку карты
                 MessageBox.Show("Извините!\nВы ввели неправильный PIN 3 раза!\nКарта забблокирована");
                 card.StateOfAccount = false;
+                comboBox_select_ATM.SelectedIndex = -1;
+                comboBox_select_card.SelectedIndex = -1;
+                comboBox_select_ATM.Items.Clear();
+                comboBox_select_card.Items.Clear();
                 _ATM.AddBlockedAccount(card.Id);
                 Refresh_dataGridView_ATMs();
                 Refresh_dataGridView_accounts();
@@ -712,7 +753,40 @@ namespace Lesson_2._1
 
         private void button_extract_cards_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            if (dataGridView_ATMs.CurrentRow == null) return;
+
+            var result = MessageBox.Show("Вы действительно хотите извлеч карты из банкомата?", "Подтверждение удаления",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                var rowData = new string[dataGridView_ATMs.Columns.Count];
+                for (var i = 0; i < dataGridView_ATMs.Columns.Count; i++)
+                    rowData[i] = dataGridView_ATMs.SelectedRows[0].Cells[i].Value.ToString();
+                var _ATM = _ATMs.GetATMByATMId(rowData[0]);
+
+                var blocked_cards = _ATM.BlockedAccount;
+                var all_account = _userAccauntList.GetAllUserAccauntIds_fm();
+
+                UserAccount temp_user_accaunt;
+                var blocked_cards_copy = new List<string>(blocked_cards);
+                foreach (var item in blocked_cards_copy)
+                {
+                    temp_user_accaunt = _userAccauntList.GetUserAccauntById(item);
+                    temp_user_accaunt.StateOfAccount = true;
+                    _ATM.RemoveBlockedAccount(item);
+                }
+                
+                Refresh_dataGridView_accounts();
+                
+                // Проверяем, есть ли выбранная строка
+                if (dataGridView_ATMs.CurrentRow != null) 
+                {
+                    // Обращаемся к 4-й ячейке в текущей строке и присваиваем ей пустую строку
+                    dataGridView_ATMs.CurrentRow.Cells[3].Value = "";
+                }
+                
+            }
         }
 
         private void textBox_transaction_summ_KeyPress(object sender, KeyPressEventArgs e)
@@ -885,10 +959,8 @@ namespace Lesson_2._1
             if (selectedItem == "" || selectedItem == null)
             {
                 MessageBox.Show("Вы должны выбрать вид операции");
-                return;
+                goto finish;
             }
-
-            ;
 
             float newbalance = 0f;
             string report = "";
@@ -942,6 +1014,7 @@ namespace Lesson_2._1
             var prop_banknotes = new Dictionary<ATM.denominations, int>();
             var values = Enum.GetValues(typeof(ATM.denominations)).Cast<ATM.denominations>().ToArray();
 
+
             if (count > 0)
             {
                 for (int i = 0; i < values.Length; i++)
@@ -950,17 +1023,141 @@ namespace Lesson_2._1
                     {
                         prop_banknotes.Add(values[i], columnData[i]);
                     }
+                    else
+                    {
+                        prop_banknotes.Add(values[i], 0);
+                    }
                 }
+            }
+
+            var prop_banknotes_int = new Dictionary<int, int>();
+            float banknotes_summ = 0;
+            foreach (var item in prop_banknotes)
+            {
+                int key = (int)item.Key;
+                int value = item.Value;
+                prop_banknotes_int[key] = value;
+                banknotes_summ += key * value;
             }
 
 
             switch (selectedItem)
             {
                 case "Пополнение наличными":
+                    if (banknotes_summ <= 0)
+                    {
+                        MessageBox.Show("Вы не вложили купюры в купюроприёмник");
+                        break;
+                    }
+                    else
+                    {
+                        var success = card.TopOnCard(banknotes_summ, out newbalance, out report, report_need);
+                        card.AccountBalace_pbl = newbalance;
+                        full_report += report;
+                        if (report_need) MessageBox.Show(full_report.Replace("\n", Environment.NewLine));
+
+                        var new_dict = new Dictionary<ATM.denominations, int>();
+                        foreach (var key in prop_banknotes.Keys)
+                        {
+                            int value = 0;
+                            if (_ATM.Banknotes.ContainsKey(key))
+                            {
+                                value = prop_banknotes[key] + _ATM.Banknotes[key];
+                            }
+                            else
+                            {
+                                value = prop_banknotes[key];
+                            }
+
+                            new_dict.Add(key, value);
+                        }
+
+                        _ATM.Banknotes = new_dict;
+                        Refresh_dataGridView_accounts();
+                        Refresh_dataGridView_ATMs();
+                    }
 
                     break;
 
                 case "Снятие наличных":
+                    if (banknotes_summ <= 0)
+                    {
+                        MessageBox.Show("Вы не вложили купюры в купюроприёмник");
+                        break;
+                    }
+                    else
+                    {
+                        if (card.GetFundsAvailable() < banknotes_summ)
+                        {
+                            MessageBox.Show("На карте/счёте " + card.Id + " не достаточно средств для операции!");
+                            break;
+                        }
+
+                        var prop_banknotes_in_ATM = new Dictionary<int, int>();
+                        float banknotes_summ_in_ATM = 0;
+                        foreach (var item in _ATM.Banknotes)
+                        {
+                            int key = (int)item.Key;
+                            int value = item.Value;
+                            prop_banknotes_in_ATM[key] = value;
+                            banknotes_summ_in_ATM += key * value;
+                        }
+
+                        if (banknotes_summ_in_ATM < summ)
+                        {
+                            MessageBox.Show("В банкомате " + _ATM.ATM_id + " не достаточно средств для операции!");
+                            break;
+                        }
+
+                        bool enough_banknotes = true;
+
+                        foreach (var key in prop_banknotes_int.Keys)
+                        {
+                            if (prop_banknotes_in_ATM.ContainsKey(key))
+                            {
+                                if (prop_banknotes_in_ATM[key] < prop_banknotes_int[key])
+                                {
+                                    enough_banknotes = false;
+                                }
+                            }
+                            else
+                            {
+                                enough_banknotes = false;
+                            }
+                        }
+
+                        if (enough_banknotes == false)
+                        {
+                            MessageBox.Show("В банкомате " + _ATM.ATM_id + " не достаточно купюр нужного номинала!");
+                            break;
+                        }
+
+                        var new_dict = new Dictionary<ATM.denominations, int>();
+                        foreach (var key in prop_banknotes.Keys)
+                        {
+                            int value = 0;
+                            if (_ATM.Banknotes.ContainsKey(key))
+                            {
+                                value = _ATM.Banknotes[key] - prop_banknotes[key];
+                            }
+                            else
+                            {
+                                value = prop_banknotes[key];
+                            }
+
+                            new_dict.Add(key, value);
+                        }
+
+                        var success = card.TopOnCard(-1 * banknotes_summ, out newbalance, out report, report_need);
+                        card.AccountBalace_pbl = newbalance;
+                        full_report += report;
+                        Refresh_dataGridView_accounts();
+
+                        _ATM.Banknotes = new_dict;
+                        Refresh_dataGridView_accounts();
+                        Refresh_dataGridView_ATMs();
+                        if (report_need) MessageBox.Show(full_report.Replace("\n", Environment.NewLine));
+                    }
 
                     break;
 
@@ -1032,9 +1229,14 @@ namespace Lesson_2._1
                     break;
             }
 
+            finish:
             comboBox_select_operation.SelectedItem = null;
             comboBox_select_card_to.SelectedIndex = -1;
             textBox_transaction_summ.Text = null;
+            for (int i = 0; i < dataGridView_q_banknotes.Rows.Count; i++)
+            {
+                dataGridView_q_banknotes.Rows[i].Cells[1].Value = null;
+            }
         }
 
         private void button_DataGridView_banknotes_update_Click(object sender, EventArgs e)
@@ -1060,7 +1262,7 @@ namespace Lesson_2._1
             Random random = new Random();
             for (var i = 0; i < dataGridView_q_banknotes.Rows.Count; i++)
             {
-                int value = random.Next(0, 1000);
+                int value = random.Next(0, 10);
                 dataGridView_q_banknotes.Rows[i].Cells[1].Value = value.ToString();
             }
         }
